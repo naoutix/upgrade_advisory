@@ -50,6 +50,17 @@ function packTag(s) {
   return `<span class="tag pk">${s.packName ? "Pack : " + s.packName : "Pack"}${s.packConcierge ? " (Concierge)" : ""}</span>`;
 }
 
+// Ordre de tri du statut : En vente, puis Pack, puis Pas en vente — reflète
+// exactement ce que tagsOf() affiche (un pack Concierge masqué compte comme
+// "Pas en vente" tant que Mode Concierge est décoché).
+function statusRank(s) {
+  const hiddenConcierge = s.packageOnly && s.packConcierge && !$("conciergeMode").checked;
+  if (hiddenConcierge) return 2;
+  if (s.packageOnly) return 1;
+  if (s.available) return 0;
+  return 2;
+}
+
 function tagsOf(s, showConcept = true) {
   const t = [];
   const hiddenConcierge = s.packageOnly && s.packConcierge && !$("conciergeMode").checked;
@@ -143,7 +154,7 @@ const tableState = {
   avail: { sort: null, dir: 1, filter: "" },
   pack: { sort: null, dir: 1, filter: "" },
   unavail: { sort: null, dir: 1, filter: "" },
-  noInGame: { sort: null, dir: 1, filter: "" },
+  noInGame: { sort: "status", dir: 1, filter: "" }, // groupe par défaut : En vente, Pack, Pas en vente
 };
 
 function sortTable(key, col) {
@@ -217,6 +228,7 @@ function ratioTable(key, rows, opts = {}) {
 }
 
 function noInGameTable(key, rows) {
+  rows = rows.map((r) => ({ ...r, status: statusRank(r) }));
   rows = applyTableState(key, rows, ["name"]);
   if (!rows.length) return '<div class="none">Aucun vaisseau ne remplit les critères.</div>';
   const tr = rows.map((r) => `
@@ -229,7 +241,7 @@ function noInGameTable(key, rows) {
     </tr>`).join("");
   return `<table>
     <thead><tr>
-      ${thSort(key, "name", "Vaisseau")}${thSort(key, "concept", "Concept")}<th>Statut pledge store</th>
+      ${thSort(key, "name", "Vaisseau")}${thSort(key, "concept", "Concept")}${thSort(key, "status", "Statut pledge store")}
       ${thSort(key, "pledge", "Pledge")}${thSort(key, "cost", "Coût upgrade")}
     </tr></thead><tbody>${tr}</tbody></table>`;
 }
