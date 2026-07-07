@@ -2,9 +2,10 @@ name: Update Pledge Fair data
 
 on:
   schedule:
-    # Toutes les 3 heures. GitHub peut retarder les cron de quelques minutes
-    # en cas de forte charge sur l'infrastructure Actions.
-    - cron: "0 */3 * * *"
+    # Une fois par jour : RSI et UEX ne changent pas assez vite pour justifier
+    # plus. GitHub peut retarder les cron de quelques minutes en cas de forte
+    # charge sur l'infrastructure Actions.
+    - cron: "0 6 * * *"
   workflow_dispatch: {} # bouton "Run workflow" pour rafraîchir manuellement
 
 permissions:

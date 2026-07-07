@@ -37,7 +37,7 @@ async function loadData() {
       (META.storefrontOk ? "" : ' <span class="warn">— le catalogue officiel était indisponible au dernier rafraîchissement, données partiellement en repli.</span>')
       + (META.conciergeWikiOk ? "" : ' <span class="warn">— le wiki des packs Concierge était indisponible, ceux-ci ne sont pas détectés.</span>');
 
-    setStatus("ok", `<b>À jour</b> — actualisé automatiquement le ${formatFreshness(META.generatedAt)} (toutes les quelques heures).`);
+    setStatus("ok", `<b>À jour</b> — actualisé automatiquement le ${formatFreshness(META.generatedAt)} (une fois par jour).`);
 
     renderList("");
     renderTables();

@@ -13,7 +13,7 @@ au chargement de la page (même origine, aucun problème CORS) et affiche les
 résultats.
 
 `docs/data.json` est régénéré automatiquement par une GitHub Action
-planifiée (`.github/workflows/update-data.yml`, toutes les 3 heures, ou à la
+planifiée (`.github/workflows/update-data.yml`, une fois par jour, ou à la
 demande via le bouton "Run workflow" dans l'onglet Actions du repo). Un
 bandeau en haut de la page affiche la date de la dernière mise à jour.
 
