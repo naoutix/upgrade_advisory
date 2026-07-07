@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pledge Fair — quel vaisseau upgrader ?</title>
+<meta name="description" content="Compare la valeur en jeu de tes vaisseaux Star Citizen à leur prix réel, et trouve le meilleur upgrade possible. Données mises à jour automatiquement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+  <h1>Pledge Fair <b>// Upgrade Advisor</b></h1>
+  <span class="sub" id="metaLine"></span>
+  <div class="tagline">Compare la valeur en jeu de tes vaisseaux à leur prix réel, et trouve le meilleur upgrade.</div>
+</header>
+
+<div id="statusBar" class="loading" role="status">
+  <span class="dot"></span>
+  <span class="txt" id="statusText">Chargement des données en direct…</span>
+</div>
+
+<div class="layout">
+  <aside class="panel">
+    <h2>1. Ton vaisseau actuel</h2>
+    <input id="search" type="search" placeholder="Rechercher un vaisseau…" autocomplete="off">
+    <div id="shipList" role="listbox" aria-label="Vaisseaux"></div>
+    <div id="current" class="current" hidden></div>
+  </aside>
+
+  <main>
+    <div class="controls panel" style="padding:12px 16px">
+      <label><input type="checkbox" id="onlyBetter" checked> Meilleur ratio uniquement</label>
+      <label><input type="checkbox" id="conciergeMode"> Mode Concierge</label>
+      <label>Trier par
+        <select id="sortBy">
+          <option value="ratio">ratio absolu aUEC/$</option>
+          <option value="marginal">rendement de l'upgrade (aUEC/$)</option>
+          <option value="cost">coût de l'upgrade</option>
+          <option value="pledge">prix pledge</option>
+        </select>
+      </label>
+    </div>
+
+    <section class="section panel">
+      <h2>2. Achetables maintenant <span class="n" id="cAvail"></span></h2>
+      <div class="desc">Vaisseaux que tu peux acheter dès aujourd'hui, seuls, sur le site officiel.
+      Clique un en-tête de colonne pour trier.</div>
+      <input type="search" class="tblFilter" id="filterAvail" placeholder="Filtrer ce tableau…" autocomplete="off">
+      <div class="tblwrap" id="tblAvail"></div>
+    </section>
+
+    <section class="section panel">
+      <h2>3. Vendus en pack uniquement <span class="n" id="cPack"></span></h2>
+      <div class="desc">Ces vaisseaux existent mais ne se vendent plus seuls pour l'instant — seulement
+      à l'intérieur d'un pack (un lot avec d'autres vaisseaux ou objets). Le nom du pack est indiqué
+      quand on le connaît. Certains packs très chers ne sont visibles que par les gros contributeurs du
+      programme "Concierge" de RSI : ils sont masqués par défaut, coche <b>Mode Concierge</b> ci-dessus
+      pour les voir quand même.</div>
+      <input type="search" class="tblFilter" id="filterPack" placeholder="Filtrer ce tableau…" autocomplete="off">
+      <div class="tblwrap" id="tblPack"></div>
+    </section>
+
+    <section class="section panel">
+      <h2>4. Pas en vente actuellement <span class="n" id="cUnavail"></span></h2>
+      <div class="desc">On connaît leur prix, mais ils ne sont en vente nulle part pour le moment
+      (ni seuls, ni en pack visible). Ils reviennent parfois lors d'événements spéciaux. Inclut aussi
+      les vaisseaux d'un pack Concierge tant que <b>Mode Concierge</b> est décoché.</div>
+      <input type="search" class="tblFilter" id="filterUnavail" placeholder="Filtrer ce tableau…" autocomplete="off">
+      <div class="tblwrap" id="tblUnavail"></div>
+    </section>
+
+    <section class="section panel">
+      <h2>5. Prix en jeu inconnu <span class="n" id="cNoInGame"></span></h2>
+      <div class="desc">Vaisseaux plus chers que le tien, mais dont on ne connaît pas encore le prix
+      en aUEC dans le jeu — souvent parce qu'ils n'existent pas encore en jeu (statut "Concept") ou
+      qu'aucun vendeur ne les propose actuellement.</div>
+      <input type="search" class="tblFilter" id="filterNoInGame" placeholder="Filtrer ce tableau…" autocomplete="off">
+      <div class="tblwrap" id="tblNoInGame"></div>
+    </section>
+  </main>
+</div>
+
+<footer id="footer">
+  Le ratio compare la valeur en jeu d'un vaisseau (en aUEC) à son prix payé en argent réel : plus il
+  est élevé, plus l'achat est avantageux. <b>Ratio absolu</b> = valeur du vaisseau cible seul, comme si
+  tu l'achetais neuf. <b>Rendement de l'upgrade</b> = ce que rapporte précisément CET upgrade-là, en
+  tenant compte de ton vaisseau actuel (un upgrade ne coûte que la différence de prix, pas le prix plein).
+  Un vaisseau n'est proposé en upgrade que s'il coûte strictement plus cher que le tien (règle du CCU).
+  <br>
+  Sources : <a href="https://uexcorp.space" target="_blank" rel="noopener">uexcorp.space</a>,
+  le pledge store officiel et le
+  <a href="https://starcitizen.tools" target="_blank" rel="noopener">wiki communautaire</a>.
+  <span id="rsiNote"></span>
+</footer>
+
+<script src="./app.js"></script>
+</body>
+</html>

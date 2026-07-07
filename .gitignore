@@ -1,0 +1,18 @@
+# Outillage local (config d'éditeur/agent, pas partie du projet)
+.claude/
+
+# Dépendances
+node_modules/
+
+# Python (ancien pipeline CLI, conservé mais pas ses caches/sorties)
+__pycache__/
+*.pyc
+
+# Sorties générées par les scripts (régénérées à la demande, pas la source)
+upgrade_advisor.html
+pledge_fair.csv
+
+# Exports / captures de travail (pas partie du site public)
+*.xlsx
+Star_Citizen_*.csv
+view-source_*.html
