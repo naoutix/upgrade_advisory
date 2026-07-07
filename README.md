@@ -21,8 +21,11 @@ bandeau en haut de la page affiche la date de la dernière mise à jour.
 
 Script Node.js (aucune dépendance Python) qui récupère et fusionne :
 
-1. [uexcorp.space](https://uexcorp.space) — prix aUEC en jeu et prix pledge
-   de référence.
+1. [L'API officielle UEX 2.0](https://uexcorp.space/api/documentation/)
+   (`api.uexcorp.uk`, lecture publique sans clé) — prix aUEC en jeu et prix
+   pledge de référence. Les pages HTML de uexcorp.space bloquent les IP des
+   runners GitHub Actions (403) ; l'API dédiée aux outils tiers n'a pas ce
+   problème.
 2. Le pledge store RSI lui-même (API interne non documentée) — catalogues
    réels "Standalone Ships" et "Packs", qui ont le dernier mot sur ce qui est
    *vraiment* en vente.

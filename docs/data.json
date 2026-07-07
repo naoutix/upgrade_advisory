@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-07T10:38:44.432Z",
+    "generatedAt": "2026-07-07T13:40:30.432Z",
     "storefrontOk": true,
     "rsiOk": true,
     "shipMatrixOk": true,
@@ -17,7 +17,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Avenger_Stalker",
       "auec": 1508220,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -29,9 +29,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Avenger_Titan",
-      "auec": 1290366,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 21506.1
+      "auec": 1290370,
+      "loc": "New Deal Lorville",
+      "ratio": 21506.17
     },
     {
       "name": "Aegis Avenger Titan Renegade",
@@ -43,7 +43,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Avenger_Titan_Renegade",
       "auec": 1759590,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 23461.2
     },
     {
@@ -55,9 +55,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Avenger_Warlock",
-      "auec": 2136645,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 25137
+      "auec": 2136640,
+      "loc": "New Deal Lorville",
+      "ratio": 25136.94
     },
     {
       "name": "Aegis Eclipse",
@@ -69,7 +69,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Eclipse",
       "auec": 7541100,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -82,7 +82,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Gladius",
       "auec": 2262330,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -108,7 +108,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Gladius_Valiant",
       "auec": 2765070,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -120,9 +120,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Hammerhead",
-      "auec": 34466568,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 47540.09
+      "auec": 34466600,
+      "loc": "New Deal Lorville",
+      "ratio": 47540.14
     },
     {
       "name": "Aegis Hammerhead Best In Show Edition",
@@ -212,7 +212,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Reclaimer",
       "auec": 30164400,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 75411
     },
     {
@@ -238,7 +238,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Redeemer",
       "auec": 9803430,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 29707.36
     },
     {
@@ -264,8 +264,99 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Retaliator_Bomber",
       "auec": 7541100,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 27422.18
+    },
+    {
+      "name": "Aegis Retaliator Cargo Module - Bow",
+      "pledge": 30,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": false,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Cargo_Module_-_Bow",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "Aegis Retaliator Cargo Module - Stern",
+      "pledge": 30,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": false,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Cargo_Module_-_Stern",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "Aegis Retaliator Dropship Front Module",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Dropship_Front_Module",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "Aegis Retaliator Living Front Module",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Living_Front_Module",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "Aegis Retaliator Living Rear Module",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Living_Rear_Module",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "Aegis Retaliator Torpedo Module – Bow",
+      "pledge": 75,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": false,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Torpedo_Module_–_Bow",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "Aegis Retaliator Torpedo Module – Stern",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": false,
+      "wikiUrl": "https://starcitizen.tools/Retaliator_Torpedo_Module_–_Stern",
+      "auec": null,
+      "loc": null,
+      "ratio": null
     },
     {
       "name": "Aegis Sabre",
@@ -277,7 +368,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Sabre",
       "auec": 4273290,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -289,9 +380,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Sabre_Comet",
-      "auec": 4650345,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 25137
+      "auec": 4650340,
+      "loc": "New Deal Lorville",
+      "ratio": 25136.97
     },
     {
       "name": "Aegis Sabre Firebird",
@@ -302,9 +393,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Sabre_Firebird",
-      "auec": 5580414,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 30164.4
+      "auec": 5580410,
+      "loc": "New Deal Lorville",
+      "ratio": 30164.38
     },
     {
       "name": "Aegis Sabre Peregrine",
@@ -315,9 +406,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Sabre_Peregrine",
-      "auec": 3845961,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 20788.98
+      "auec": 3845960,
+      "loc": "New Deal Lorville",
+      "ratio": 20788.97
     },
     {
       "name": "Aegis Sabre Raven",
@@ -355,7 +446,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Vanguard_Harbinger",
       "auec": 8200400,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 28277.24
     },
     {
@@ -368,7 +459,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Vanguard_Hoplite",
       "auec": 6645250,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 27688.54
     },
     {
@@ -381,7 +472,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Vanguard_Sentinel",
       "auec": 7776700,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 28278.91
     },
     {
@@ -394,7 +485,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Vanguard_Warden",
       "auec": 7354900,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 28288.08
     },
     {
@@ -420,7 +511,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Arrow",
       "auec": 1984500,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -433,7 +524,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Asgard",
       "auec": 17860500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 51030
     },
     {
@@ -458,9 +549,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Ballista",
-      "auec": 1407672,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 10054.8
+      "auec": 1407670,
+      "loc": "New Deal Lorville",
+      "ratio": 10054.79
     },
     {
       "name": "Anvil Ballista Dunestalker",
@@ -490,7 +581,7 @@
     },
     {
       "name": "Anvil C8 Pisces",
-      "pledge": 60,
+      "pledge": null,
       "available": false,
       "packageOnly": false,
       "packName": null,
@@ -498,8 +589,8 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/C8_Pisces",
       "auec": 745290,
-      "loc": "Astro Armada - Area 18",
-      "ratio": 12421.5
+      "loc": "Astro Armada",
+      "ratio": null
     },
     {
       "name": "Anvil C8R Pisces Rescue",
@@ -511,7 +602,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/C8R_Pisces_Rescue",
       "auec": 555660,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 8548.62
     },
     {
@@ -524,7 +615,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/C8X_Pisces_Expedition",
       "auec": 515970,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 11466
     },
     {
@@ -537,7 +628,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Carrack",
       "auec": 34398000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 57330
     },
     {
@@ -562,9 +653,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Centurion",
-      "auec": 1106028,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 10054.8
+      "auec": 1106030,
+      "loc": "New Deal Lorville",
+      "ratio": 10054.82
     },
     {
       "name": "Anvil Crucible",
@@ -615,7 +706,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C_Hornet_Mk_I",
       "auec": 2910600,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 23284.8
     },
     {
@@ -627,9 +718,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C_Hornet_Mk_II",
-      "auec": 4650345,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 26573.4
+      "auec": 4650340,
+      "loc": "New Deal Lorville",
+      "ratio": 26573.37
     },
     {
       "name": "Anvil F7C Hornet Wildfire Mk I",
@@ -641,7 +732,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C_Hornet_Wildfire_Mk_I",
       "auec": 4630500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -667,7 +758,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C-M_Super_Hornet_Mk_I",
       "auec": 4762800,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -693,7 +784,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C-R_Hornet_Tracker_Mk_I",
       "auec": 3210480,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 21403.2
     },
     {
@@ -705,9 +796,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C-R_Hornet_Tracker_Mk_II",
-      "auec": 4882858,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 26393.83
+      "auec": 4882860,
+      "loc": "New Deal Lorville",
+      "ratio": 26393.84
     },
     {
       "name": "Anvil F7C-S Hornet Ghost Mk I",
@@ -719,7 +810,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C-S_Hornet_Ghost_Mk_I",
       "auec": 3307500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 23625
     },
     {
@@ -732,7 +823,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/F7C-S_Hornet_Ghost_Mk_II",
       "auec": 5115370,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 27650.65
     },
     {
@@ -771,7 +862,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Gladiator",
       "auec": 4365900,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -784,7 +875,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Hawk",
       "auec": 2646000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -797,7 +888,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Hurricane",
       "auec": 5556600,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -828,7 +919,7 @@
     },
     {
       "name": "Anvil Odin",
-      "pledge": null,
+      "pledge": 5000,
       "available": false,
       "packageOnly": false,
       "packName": null,
@@ -849,7 +940,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Paladin",
       "auec": 15876000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 45360
     },
     {
@@ -862,7 +953,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Spartan",
       "auec": 804384,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 10054.8
     },
     {
@@ -875,7 +966,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Terrapin",
       "auec": 5433120,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Astro Armada",
       "ratio": 24696
     },
     {
@@ -888,7 +979,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Terrapin_Medic",
       "auec": 5704770,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 25930.77
     },
     {
@@ -901,7 +992,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Valkyrie",
       "auec": 19845000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 52920
     },
     {
@@ -927,7 +1018,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Khartu-al",
       "auec": 7229250,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 42525
     },
     {
@@ -940,7 +1031,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Nox",
       "auec": 722925,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 16065
     },
     {
@@ -966,7 +1057,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/San_tok.Yāi",
       "auec": 9355500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 42525
     },
     {
@@ -979,7 +1070,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/ATLS",
       "auec": 71820,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.5
     },
     {
@@ -992,7 +1083,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/ATLS_GEO",
       "auec": 86184,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1915.2
     },
     {
@@ -1070,7 +1161,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/CSV-SM",
       "auec": 359100,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 7980
     },
     {
@@ -1082,9 +1173,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MOLE",
-      "auec": 8483738,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 26932.5
+      "auec": 8483740,
+      "loc": "New Deal Lorville",
+      "ratio": 26932.51
     },
     {
       "name": "Argo MOLE Carbon Edition",
@@ -1135,7 +1226,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MPUV_Cargo",
       "auec": 314213,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 8977.51
     },
     {
@@ -1148,7 +1239,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MPUV_Personnel",
       "auec": 359100,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 8977.5
     },
     {
@@ -1161,7 +1252,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MPUV_Tractor",
       "auec": 395010,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 9875.25
     },
     {
@@ -1173,9 +1264,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/RAFT",
-      "auec": 3366563,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 17718.75
+      "auec": 3366560,
+      "loc": "New Deal Lorville",
+      "ratio": 17718.74
     },
     {
       "name": "Argo SRV",
@@ -1187,7 +1278,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/SRV",
       "auec": 3770550,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 22851.82
     },
     {
@@ -1200,7 +1291,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Defender",
       "auec": 6237000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 28350
     },
     {
@@ -1226,7 +1317,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/HoverQuad",
       "auec": 53865,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.5
     },
     {
@@ -1239,7 +1330,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Mustang_Alpha",
       "auec": 610470,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 20349
     },
     {
@@ -1265,7 +1356,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Mustang_Beta",
       "auec": 622440,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 15561
     },
     {
@@ -1278,7 +1369,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Mustang_Delta",
       "auec": 1228500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 18900
     },
     {
@@ -1291,7 +1382,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Mustang_Gamma",
       "auec": 1178100,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 21420
     },
     {
@@ -1317,7 +1408,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Nomad",
       "auec": 1436400,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 17955
     },
     {
@@ -1343,7 +1434,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/A1_Spirit",
       "auec": 4961250,
-      "loc": "New Deal - Crusader Showroom - Orison",
+      "loc": "New Deal Crusader",
       "ratio": 24806.25
     },
     {
@@ -1356,7 +1447,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/A2_Hercules_Starlifter",
       "auec": 37800200,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "New Deal Crusader",
       "ratio": 50400.27
     },
     {
@@ -1369,7 +1460,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Ares_Inferno_Starfighter",
       "auec": 4725000,
-      "loc": "New Deal - Crusader Showroom - Orison",
+      "loc": "New Deal Crusader",
       "ratio": 18900
     },
     {
@@ -1382,7 +1473,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Ares_Ion_Starfighter",
       "auec": 4725000,
-      "loc": "New Deal - Crusader Showroom - Orison",
+      "loc": "New Deal Crusader",
       "ratio": 18900
     },
     {
@@ -1395,7 +1486,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/C1_Spirit",
       "auec": 3118500,
-      "loc": "New Deal - Crusader Showroom - Orison",
+      "loc": "New Deal Crusader",
       "ratio": 24948
     },
     {
@@ -1408,7 +1499,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/C2_Hercules_Starlifter",
       "auec": 18900000,
-      "loc": "New Deal - Crusader Showroom - Orison",
+      "loc": "Astro Armada",
       "ratio": 47250
     },
     {
@@ -1447,7 +1538,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Intrepid",
       "auec": 1173060,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 18047.08
     },
     {
@@ -1460,7 +1551,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/M2_Hercules_Starlifter",
       "auec": 28009800,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 53865
     },
     {
@@ -1473,7 +1564,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Mercury_Star_Runner",
       "auec": 12285000,
-      "loc": "New Deal - Crusader Showroom - Orison",
+      "loc": "New Deal Crusader",
       "ratio": 47250
     },
     {
@@ -1486,7 +1577,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Buccaneer",
       "auec": 1580040,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 14364
     },
     {
@@ -1499,7 +1590,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Caterpillar",
       "auec": 11850300,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 35910
     },
     {
@@ -1537,9 +1628,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Clipper",
-      "auec": 3619728,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 24131.52
+      "auec": 3619730,
+      "loc": "New Deal Lorville",
+      "ratio": 24131.53
     },
     {
       "name": "Drake Corsair",
@@ -1551,7 +1642,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Corsair",
       "auec": 6224400,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 24897.6
     },
     {
@@ -1564,7 +1655,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutlass_Black",
       "auec": 2010960,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 18281.45
     },
     {
@@ -1590,7 +1681,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutlass_Blue",
       "auec": 3519180,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 20109.6
     },
     {
@@ -1602,9 +1693,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutlass_Red",
-      "auec": 2714796,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 20109.6
+      "auec": 2714800,
+      "loc": "New Deal Lorville",
+      "ratio": 20109.63
     },
     {
       "name": "Drake Cutlass Steel",
@@ -1615,9 +1706,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutlass_Steel",
-      "auec": 3797483,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 16159.5
+      "auec": 3797480,
+      "loc": "New Deal Lorville",
+      "ratio": 16159.49
     },
     {
       "name": "Drake Cutter",
@@ -1629,7 +1720,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutter",
       "auec": 603288,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 13406.4
     },
     {
@@ -1642,7 +1733,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutter_Rambler",
       "auec": 703836,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 14076.72
     },
     {
@@ -1655,7 +1746,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cutter_Scout",
       "auec": 670320,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 13406.4
     },
     {
@@ -1668,7 +1759,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Dragonfly_Black",
       "auec": 325584,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 8139.6
     },
     {
@@ -1694,7 +1785,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Golem",
       "auec": 1005480,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 16758
     },
     {
@@ -1720,7 +1811,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Herald",
       "auec": 1220940,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 14364
     },
     {
@@ -1785,7 +1876,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MULE",
       "auec": 64638,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1436.4
     },
     {
@@ -1811,7 +1902,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Vulture",
       "auec": 2513700,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 14364
     },
     {
@@ -1824,7 +1915,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Blade",
       "auec": 7796250,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 28350
     },
     {
@@ -1850,7 +1941,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Prowler",
       "auec": 18711000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 42525
     },
     {
@@ -1863,7 +1954,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Prowler_Utility",
       "auec": 16839000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 56130
     },
     {
@@ -1876,7 +1967,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Stinger",
       "auec": 8930250,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Teach's Levski",
       "ratio": 28350
     },
     {
@@ -1889,7 +1980,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Talon",
       "auec": 3260250,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 28350
     },
     {
@@ -1902,7 +1993,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Talon_Shrike",
       "auec": 3260250,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 28350
     },
     {
@@ -1928,7 +2019,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Syulen",
       "auec": 2082500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 32038.46
     },
     {
@@ -1954,7 +2045,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Market_Shiv",
       "auec": 5556600,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Teach's Levski",
       "ratio": 37044
     },
     {
@@ -1967,7 +2058,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MDC",
       "auec": 127575,
-      "loc": "Buy and Fly - Ruin Station",
+      "loc": "Buy and Fly Ruin Station",
       "ratio": 2551.5
     },
     {
@@ -1980,7 +2071,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MTC",
       "auec": 75600,
-      "loc": "Buy and Fly - Ruin Station",
+      "loc": "New Deal Lorville",
       "ratio": 1512
     },
     {
@@ -1993,7 +2084,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/PTV",
       "auec": 28350,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Astro Armada",
       "ratio": 1890
     },
     {
@@ -2006,7 +2097,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/ROC",
       "auec": 98753,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -2019,7 +2110,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/ROC-DS",
       "auec": 134663,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -2032,7 +2123,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/STV",
       "auec": 75600,
-      "loc": "Buy and Fly - Ruin Station",
+      "loc": "Astro Armada",
       "ratio": 1890
     },
     {
@@ -2058,7 +2149,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/L-21_Wolf",
       "auec": 2381400,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 23814
     },
     {
@@ -2084,7 +2175,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/P-52_Merlin",
       "auec": 283500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 11340
     },
     {
@@ -2097,7 +2188,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/P-72_Archimedes",
       "auec": 449820,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 12852
     },
     {
@@ -2136,7 +2227,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fury",
       "auec": 691268,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 12568.51
     },
     {
@@ -2149,7 +2240,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fury_LX",
       "auec": 824670,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 14994
     },
     {
@@ -2162,7 +2253,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fury_MX",
       "auec": 691268,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 12568.51
     },
     {
@@ -2175,7 +2266,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Guardian",
       "auec": 6284250,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -2188,7 +2279,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Guardian_MX",
       "auec": 7038360,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 24270.21
     },
     {
@@ -2214,7 +2305,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Pulse",
       "auec": 175959,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 5865.3
     },
     {
@@ -2227,7 +2318,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Pulse_LX",
       "auec": 201096,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 8043.84
     },
     {
@@ -2239,9 +2330,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Razor",
-      "auec": 1770363,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 12209.4
+      "auec": 1770360,
+      "loc": "New Deal Lorville",
+      "ratio": 12209.38
     },
     {
       "name": "Mirai Razor EX",
@@ -2252,9 +2343,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Razor_EX",
-      "auec": 1669815,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 10773
+      "auec": 1669820,
+      "loc": "New Deal Lorville",
+      "ratio": 10773.03
     },
     {
       "name": "Mirai Razor LX",
@@ -2266,7 +2357,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Razor_LX",
       "auec": 1831410,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 12209.4
     },
     {
@@ -2278,6 +2369,71 @@
       "packConcierge": true,
       "concept": true,
       "wikiUrl": "https://starcitizen.tools/Endeavor",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "MISC Endeavor Fuel Bay Pod",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Endeavor_Fuel_Bay_Pod",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "MISC Endeavor General Research Pod",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Endeavor_General_Research_Pod",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "MISC Endeavor Landing Bay Pod",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Endeavor_Landing_Bay_Pod",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "MISC Endeavor Medical Bay Pod",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Endeavor_Medical_Bay_Pod",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "MISC Endeavor Telescope Array Bay Pod",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Endeavor_Telescope_Array_Bay_Pod",
       "auec": null,
       "loc": null,
       "ratio": null
@@ -2305,7 +2461,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fortune",
       "auec": 1795500,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 10260
     },
     {
@@ -2317,9 +2473,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Freelancer",
-      "auec": 2962575,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 26932.5
+      "auec": 2962580,
+      "loc": "New Deal Lorville",
+      "ratio": 26932.55
     },
     {
       "name": "MISC Freelancer DUR",
@@ -2330,9 +2486,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Freelancer_DUR",
-      "auec": 3151103,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 23341.5
+      "auec": 3151100,
+      "loc": "New Deal Lorville",
+      "ratio": 23341.48
     },
     {
       "name": "MISC Freelancer MAX",
@@ -2343,9 +2499,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Freelancer_MAX",
-      "auec": 4039875,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 26932.5
+      "auec": 4039880,
+      "loc": "New Deal Lorville",
+      "ratio": 26932.53
     },
     {
       "name": "MISC Freelancer MIS",
@@ -2356,9 +2512,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Freelancer_MIS",
-      "auec": 4713188,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 26932.5
+      "auec": 4713190,
+      "loc": "New Deal Lorville",
+      "ratio": 26932.51
     },
     {
       "name": "MISC Hull A",
@@ -2370,7 +2526,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Hull_A",
       "auec": 1615950,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 17955
     },
     {
@@ -2395,9 +2551,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Hull_C",
-      "auec": 15710625,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 31421.25
+      "auec": 15710600,
+      "loc": "New Deal Lorville",
+      "ratio": 31421.2
     },
     {
       "name": "MISC Hull D",
@@ -2447,9 +2603,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Prospector",
-      "auec": 2783025,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 17955
+      "auec": 2783020,
+      "loc": "New Deal Lorville",
+      "ratio": 17954.97
     },
     {
       "name": "MISC Reliant Kore",
@@ -2460,9 +2616,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Reliant_Kore",
-      "auec": 1633905,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 25137
+      "auec": 1633900,
+      "loc": "New Deal Lorville",
+      "ratio": 25136.92
     },
     {
       "name": "MISC Reliant Mako",
@@ -2473,9 +2629,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Reliant_Mako",
-      "auec": 2388015,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 25137
+      "auec": 2388020,
+      "loc": "New Deal Lorville",
+      "ratio": 25137.05
     },
     {
       "name": "MISC Reliant Sen",
@@ -2486,9 +2642,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Reliant_Sen",
-      "auec": 2136645,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 25137
+      "auec": 2136640,
+      "loc": "New Deal Lorville",
+      "ratio": 25136.94
     },
     {
       "name": "MISC Reliant Tana",
@@ -2499,9 +2655,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Reliant_Tana",
-      "auec": 1885275,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 25137
+      "auec": 1885280,
+      "loc": "New Deal Lorville",
+      "ratio": 25137.07
     },
     {
       "name": "MISC Starfarer",
@@ -2513,7 +2669,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Starfarer",
       "auec": 12568500,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 41895
     },
     {
@@ -2526,7 +2682,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Starfarer_Gemini",
       "auec": 14244300,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 41895
     },
     {
@@ -2552,7 +2708,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Starlancer_MAX",
       "auec": 8379000,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 33516
     },
     {
@@ -2565,7 +2721,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Starlancer_TAC",
       "auec": 13381200,
-      "loc": "Astro Armada - Area 18",
+      "loc": "New Deal Lorville",
       "ratio": 35683.2
     },
     {
@@ -2591,7 +2747,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/100i",
       "auec": 1089270,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 21785.4
     },
     {
@@ -2604,7 +2760,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/125a",
       "auec": 1508220,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 25137
     },
     {
@@ -2617,7 +2773,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/135c",
       "auec": 1490580,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 22932
     },
     {
@@ -2630,7 +2786,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/300i",
       "auec": 1375920,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 22932
     },
     {
@@ -2643,7 +2799,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/315p",
       "auec": 1490580,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 22932
     },
     {
@@ -2656,7 +2812,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/325a",
       "auec": 1852200,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 26460
     },
     {
@@ -2669,7 +2825,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/350r",
       "auec": 3748500,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 29988
     },
     {
@@ -2681,9 +2837,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/400i",
-      "auec": 8398063,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 33592.25
+      "auec": 8398060,
+      "loc": "New Deal Lorville",
+      "ratio": 33592.24
     },
     {
       "name": "Origin 600i Executive Edition",
@@ -2707,9 +2863,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/600i_Explorer",
-      "auec": 27231750,
-      "loc": "Astro Armada - Area 18",
-      "ratio": 57330
+      "auec": 27231800,
+      "loc": "Astro Armada",
+      "ratio": 57330.11
     },
     {
       "name": "Origin 600i Touring",
@@ -2720,9 +2876,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/600i_Touring",
-      "auec": 24938550,
-      "loc": "Astro Armada - Area 18",
-      "ratio": 57330
+      "auec": 24938600,
+      "loc": "Astro Armada",
+      "ratio": 57330.11
     },
     {
       "name": "Origin 85X",
@@ -2734,7 +2890,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/85X",
       "auec": 544635,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 10892.7
     },
     {
@@ -2746,9 +2902,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/890_Jump",
-      "auec": 62088392,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 65356.2
+      "auec": 62088400,
+      "loc": "New Deal Lorville",
+      "ratio": 65356.21
     },
     {
       "name": "Origin G12",
@@ -2799,7 +2955,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/M50",
       "auec": 1424430,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 14244.3
     },
     {
@@ -2825,7 +2981,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/X1",
       "auec": 105840,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 2352
     },
     {
@@ -2838,7 +2994,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/X1_Force",
       "auec": 125685,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 2285.18
     },
     {
@@ -2851,7 +3007,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/X1_Velocity",
       "auec": 113117,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 2262.34
     },
     {
@@ -2864,7 +3020,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Apollo_Medivac",
       "auec": 8295210,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Teach's Levski",
       "ratio": 28604.17
     },
     {
@@ -2877,7 +3033,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Apollo_Triage",
       "auec": 7541100,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Teach's Levski",
       "ratio": 29004.23
     },
     {
@@ -2903,7 +3059,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Aurora_Mk_I_CL",
       "auec": 969570,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "New Deal Lorville",
       "ratio": 21546
     },
     {
@@ -2916,7 +3072,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Aurora_Mk_I_ES",
       "auec": 402192,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "New Deal Lorville",
       "ratio": 20109.6
     },
     {
@@ -2929,7 +3085,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Aurora_Mk_I_LN",
       "auec": 861840,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 21546
     },
     {
@@ -2942,7 +3098,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Aurora_Mk_I_LX",
       "auec": 653562,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 18673.2
     },
     {
@@ -2955,7 +3111,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Aurora_Mk_I_MR",
       "auec": 646380,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 21546
     },
     {
@@ -2993,9 +3149,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Constellation_Andromeda",
-      "auec": 9652608,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 40219.2
+      "auec": 9652610,
+      "loc": "New Deal Lorville",
+      "ratio": 40219.21
     },
     {
       "name": "RSI Constellation Aquila",
@@ -3006,9 +3162,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Constellation_Aquila",
-      "auec": 11577384,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 36753.6
+      "auec": 11577400,
+      "loc": "New Deal Lorville",
+      "ratio": 36753.65
     },
     {
       "name": "RSI Constellation Phoenix",
@@ -3019,9 +3175,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Constellation_Phoenix",
-      "auec": 14076720,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
-      "ratio": 40219.2
+      "auec": 14076700,
+      "loc": "New Deal Lorville",
+      "ratio": 40219.14
     },
     {
       "name": "RSI Constellation Phoenix Emerald",
@@ -3045,9 +3201,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Constellation_Taurus",
-      "auec": 7641648,
-      "loc": "Teach's Ship Shop - Levski",
-      "ratio": 38208.24
+      "auec": 7641650,
+      "loc": "New Deal Lorville",
+      "ratio": 38208.25
     },
     {
       "name": "RSI Galaxy",
@@ -3063,6 +3219,45 @@
       "ratio": null
     },
     {
+      "name": "RSI Galaxy Cargo Module",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Galaxy_Cargo_Module",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "RSI Galaxy Medical Module",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Galaxy_Medical_Module",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
+      "name": "RSI Galaxy Refinery Module",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": true,
+      "wikiUrl": "https://starcitizen.tools/Galaxy_Refinery_Module",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
       "name": "RSI Hermes",
       "pledge": 220,
       "available": false,
@@ -3072,7 +3267,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Hermes",
       "auec": 7110180,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Teach's Levski",
       "ratio": 32319
     },
     {
@@ -3085,7 +3280,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Lynx",
       "auec": 129276,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 2154.6
     },
     {
@@ -3098,7 +3293,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Mantis",
       "auec": 3231900,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 21546
     },
     {
@@ -3111,7 +3306,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Meteor",
       "auec": 4309200,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 16573.85
     },
     {
@@ -3137,7 +3332,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Perseus",
       "auec": 39680000,
-      "loc": "Astro Armada - Area 18",
+      "loc": "Astro Armada",
       "ratio": 49600
     },
     {
@@ -3163,7 +3358,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Salvation",
       "auec": 1185030,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "Teach's Levski",
       "ratio": 19750.5
     },
     {
@@ -3176,7 +3371,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Scorpius",
       "auec": 5171040,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 21546
     },
     {
@@ -3189,7 +3384,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Scorpius_Antares",
       "auec": 4955580,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 21546
     },
     {
@@ -3202,7 +3397,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Ursa",
       "auec": 107730,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 2154.6
     },
     {
@@ -3228,7 +3423,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Ursa_Medivac",
       "auec": 118503,
-      "loc": "Teach's Ship Shop - Levski",
+      "loc": "New Deal Lorville",
       "ratio": 2154.6
     },
     {
@@ -3241,7 +3436,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Zeus_Mk_II_CL",
       "auec": 6463800,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 36936
     },
     {
@@ -3254,7 +3449,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Zeus_Mk_II_ES",
       "auec": 4201470,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 24008.4
     },
     {
@@ -3280,7 +3475,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cyclone",
       "auec": 98753,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -3293,7 +3488,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cyclone_AA",
       "auec": 143640,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.5
     },
     {
@@ -3306,7 +3501,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cyclone_MT",
       "auec": 134663,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -3319,7 +3514,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cyclone_RC",
       "auec": 116708,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -3332,7 +3527,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cyclone_RN",
       "auec": 116708,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -3345,7 +3540,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Cyclone_TR",
       "auec": 116708,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 1795.51
     },
     {
@@ -3358,7 +3553,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Nova_Tank",
       "auec": 861840,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 7182
     },
     {
@@ -3410,7 +3605,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Storm",
       "auec": 430920,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 4788
     },
     {
@@ -3423,7 +3618,7 @@
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Storm_AA",
       "auec": 452466,
-      "loc": "New Deal - Teasa Spaceport - Lorville",
+      "loc": "New Deal Lorville",
       "ratio": 4524.66
     },
     {

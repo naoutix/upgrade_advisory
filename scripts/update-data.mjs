@@ -8,7 +8,10 @@
 // (même origine, aucun souci CORS).
 //
 // Sources, par ordre de priorité (voir chaque fonction fetch* ci-dessous) :
-//   1. uexcorp.space (prix aUEC en jeu + prix pledge de référence)
+//   1. L'API officielle UEX 2.0 (api.uexcorp.uk, pas de clé requise en
+//      lecture) : prix aUEC en jeu + prix pledge de référence. Le site
+//      uexcorp.space (pages HTML) bloque les IP des runners GitHub Actions,
+//      d'où l'usage de l'API dédiée aux outils tiers plutôt que du scraping.
 //   2. Le pledge store RSI lui-même (API interne non documentée, persisted
 //      queries Apollo) : catalogues "Standalone Ships" et "Packs" réels.
 //   3. L'outil d'upgrade RSI (API non documentée) : repli si 2. est indisponible.
@@ -22,8 +25,6 @@ import { load as cheerioLoad } from "cheerio";
 import { writeFile, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
-const URL_IN_GAME = "https://uexcorp.space/vehicles/home/list/in_game_sell/";
-const URL_PLEDGE = "https://uexcorp.space/vehicles/home/list/pledge_store/";
 const URL_RSI_UPGRADE = "https://robertsspaceindustries.com/pledge-store/api/upgrade/graphql";
 const URL_SHIP_MATRIX = "https://robertsspaceindustries.com/ship-matrix/index";
 
@@ -112,103 +113,79 @@ function matchByBareName(uexName, values) {
   return null;
 }
 
-function parseNumber(value) {
-  if (value == null) return null;
-  const txt = String(value).replace(/[^0-9.\-]/g, "");
-  if (txt === "" || txt === "-" || txt === ".") return null;
-  const n = parseFloat(txt);
-  if (Number.isNaN(n)) return null;
-  return n > 0 ? n : null;
-}
-
-function findCol(headers, candidates, def = null) {
-  const low = headers.map((h) => h.toLowerCase());
-  for (const cand of candidates) {
-    const i = low.findIndex((h) => h.includes(cand));
-    if (i !== -1) return i;
-  }
-  return def;
-}
-
 // ---------------------------------------------------------------------------
-// Extraction UEX
+// Extraction UEX — API officielle 2.0 (pas de scraping HTML)
 // ---------------------------------------------------------------------------
+//
+// Le site uexcorp.space (pages HTML) bloque les requêtes venant des IP des
+// runners GitHub Actions (403, probablement une protection anti-bot type
+// Cloudflare) alors qu'il n'y a aucun souci en local. UEX publie justement
+// une API dédiée aux outils tiers, sur un domaine différent, qui ne bloque
+// pas ces IP et ne nécessite pas de clé pour la simple lecture. On l'utilise
+// à la place du scraping HTML.
 
-function getVehicleRows($, source) {
-  const table = $("table.tbl-vehicles").first();
-  if (table.length === 0) throw new Error(`Table des vaisseaux introuvable dans ${source}`);
-  const headers = table.find("thead th, thead td").map((_, el) => $(el).text().trim()).get();
-  const tbody = table.find("tbody").first();
-  const rows = (tbody.length ? tbody : table).find("tr")
-    .filter((_, tr) => $(tr).find("td").length > 0).toArray();
-  return { headers, rows };
-}
+const URL_UEX_API = "https://api.uexcorp.uk/2.0";
 
-function vehicleKey($, tr) {
-  const id = $(tr).attr("id") || "";
-  const m = id.match(/vehicle-row-(\d+)/);
-  return m ? m[1] : null;
-}
-
-function vehicleName($, tr) {
-  const td = $(tr).find("td").first();
-  if (td.length === 0) return "";
-  const name = td.attr("data-value") || td.text().trim();
-  return name.replace(/\s+/g, " ").trim();
-}
-
-function cellBuyable($, td) {
-  if (td.find("i.fa-shopping-cart").length > 0) return true;
-  return (td.attr("title") || "").toLowerCase().includes("available for purchase");
-}
-
-async function parseInGame(url) {
-  const html = await fetchText(url);
-  const $ = cheerioLoad(html);
-  const { headers, rows } = getVehicleRows($, url);
-  const iSeller = findCol(headers, ["seller"], 2);
-  const iPrice = findCol(headers, ["price uec", "uec"], 3);
-
-  const ships = {};
-  for (const tr of rows) {
-    const tds = $(tr).find("td");
-    if (tds.length <= Math.max(iSeller, iPrice)) continue;
-    const priceTd = tds.eq(iPrice);
-    const price = parseNumber(priceTd.attr("data-value") || priceTd.text().trim());
-    if (price == null) continue;
-    const sellerTd = tds.eq(iSeller);
-    const loc = sellerTd.attr("data-value") || sellerTd.text().trim();
-    const key = vehicleKey($, tr) || normName(vehicleName($, tr));
-    if (!ships[key]) ships[key] = { name: vehicleName($, tr), locations: [] };
-    ships[key].locations.push({ loc: loc.replace(/\s+/g, " ").trim(), auec: price });
+async function fetchUexJson(path) {
+  const data = await fetchJson(`${URL_UEX_API}/${path}`, { headers: { Accept: "application/json" } });
+  if (!data || data.status !== "ok" || !Array.isArray(data.data)) {
+    throw new Error(`Réponse UEX API inattendue pour ${path}`);
   }
-  return ships;
+  return data.data;
 }
 
-async function parsePledge(url) {
-  const html = await fetchText(url);
-  const $ = cheerioLoad(html);
-  const { headers, rows } = getVehicleRows($, url);
-  const iStd = findCol(headers, ["standalone"], 4);
-  const iWb = findCol(headers, ["warbond"], 5);
+// UEX conserve un historique de prix par vaisseau ET par devise/région
+// (USD, GBP, EUR-FR, EUR-DE, EUR-NL, EUR-AT...), pas une seule ligne par
+// vaisseau. Il faut donc explicitement ne garder que l'entrée en USD —
+// prendre "la plus récente" toutes devises confondues piocherait parfois
+// une entrée en livres ou en euros, faussant le prix affiché en $.
+function usdPriceEntry(priceRows) {
+  return priceRows.find((p) => p.currency === "USD") || null;
+}
 
-  const out = [];
-  for (const tr of rows) {
-    const tds = $(tr).find("td");
-    if (tds.length <= Math.max(iStd, iWb)) continue;
-    const stdTd = tds.eq(iStd);
-    const wbTd = tds.eq(iWb);
-    const std = parseNumber(stdTd.attr("data-value") || stdTd.text().trim());
-    const wb = parseNumber(wbTd.attr("data-value") || wbTd.text().trim());
-    const pledge = std != null ? std : wb;
-    const available = (std != null && cellBuyable($, stdTd)) || (wb != null && cellBuyable($, wbTd));
-    const concept = $(tr).find("td").first().find('i[title="In Development"]').length > 0;
-    out.push({
-      key: vehicleKey($, tr), name: vehicleName($, tr),
-      pledge, available: Boolean(available), concept,
-    });
+async function fetchUexRoster() {
+  log(`Vérification UEX (${URL_UEX_API}) ...`);
+  const [vehicles, prices, purchases] = await Promise.all([
+    fetchUexJson("vehicles"),
+    fetchUexJson("vehicles_prices"),
+    fetchUexJson("vehicles_purchases_prices_all"),
+  ]);
+
+  const vehicleById = new Map(vehicles.map((v) => [v.id, v]));
+
+  const pricesByVehicle = new Map();
+  for (const p of prices) {
+    if (!pricesByVehicle.has(p.id_vehicle)) pricesByVehicle.set(p.id_vehicle, []);
+    pricesByVehicle.get(p.id_vehicle).push(p);
   }
-  return out;
+
+  const pledge = vehicles.map((v) => {
+    const usd = usdPriceEntry(pricesByVehicle.get(v.id) || []);
+    let pledgePrice = null;
+    let available = false;
+    if (usd) {
+      const std = usd.price > 0 ? usd.price : null;
+      const wb = usd.price_warbond > 0 ? usd.price_warbond : null;
+      pledgePrice = std != null ? std : wb;
+      available = Boolean(usd.on_sale || usd.on_sale_warbond);
+    }
+    return {
+      key: String(v.id), name: v.name_full,
+      pledge: pledgePrice, available, concept: v.is_concept === 1,
+    };
+  });
+
+  const inGame = {};
+  for (const row of purchases) {
+    if (!(row.price_buy > 0)) continue;
+    const v = vehicleById.get(row.id_vehicle);
+    if (!v) continue;
+    const key = String(row.id_vehicle);
+    if (!inGame[key]) inGame[key] = { name: v.name_full, locations: [] };
+    inGame[key].locations.push({ loc: row.terminal_name, auec: row.price_buy });
+  }
+
+  return { pledge, inGame };
 }
 
 // ---------------------------------------------------------------------------
@@ -629,16 +606,16 @@ function parseArgs(argv) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
-  const [storefrontStandalone, storefrontPacks, wikiConciergePacks, rsi, shipMatrix, inGame, pledge] =
+  const [storefrontStandalone, storefrontPacks, wikiConciergePacks, rsi, shipMatrix, uex] =
     await Promise.all([
       fetchStorefrontStandaloneShips(),
       fetchStorefrontPacks(),
       fetchWikiConciergePacks(),
       fetchRsiStandalone(),
       fetchShipMatrix(),
-      parseInGame(URL_IN_GAME),
-      parsePledge(URL_PLEDGE),
+      fetchUexRoster(),
     ]);
+  const { inGame, pledge } = uex;
 
   const manualPackages = await loadPackagesFile(args.packages);
 
