@@ -65,9 +65,9 @@ Le 2ᵉ et 3ᵉ champ sont optionnels.
    permissions`) pour que l'Action puisse commiter `docs/data.json`.
 4. Le site est servi à `https://<utilisateur>.github.io/<repo>/`.
 
-## Ancien outil (Python, `upgrade_advisor.py`)
+## Anciens scripts Python
 
-Le script Python d'origine reste dans le dépôt (génère un unique fichier
-HTML autonome, utile pour un usage local ponctuel) mais n'est plus le
-pipeline utilisé par le site public — `scripts/update-data.mjs` l'a
-remplacé pour permettre l'hébergement statique sur GitHub Pages.
+Les prototypes qui ont précédé ce pipeline (dont `upgrade_advisor.py`, qui a
+directement inspiré `scripts/update-data.mjs`) sont archivés dans
+[`old/`](old/), avec leur propre README détaillant leur usage. Ils ne font
+plus partie du pipeline utilisé par le site public.
