@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Défense en profondeur contre le XSS : les données affichées (data.json)
+     proviennent de sources externes, dont un wiki publiquement éditable.
+     Elles sont échappées dans app.js (esc()), et cette CSP bloque en plus
+     tout script inline ou externe si un échappement venait à être oublié.
+     'unsafe-inline' en style-src : nécessaire aux quelques attributs
+     style="" générés par app.js (barres de ratio, grille de la fiche). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>Pledge Fair — quel vaisseau upgrader ?</title>
 <meta name="description" content="Compare la valeur en jeu de tes vaisseaux Star Citizen à leur prix réel, et trouve le meilleur upgrade possible. Données mises à jour automatiquement.">
 <link rel="preconnect" href="https://fonts.googleapis.com">

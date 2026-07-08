@@ -1,3 +1,5 @@
+/* Pledge Fair — Upgrade Advisor. Thème sombre "cockpit" : palette définie
+   ici en variables, utilisée partout ensuite. Pas de framework, pas de build. */
 :root{
   --bg:#0a0f14; --panel:#101922; --panel2:#0d141c; --edge:#1d2c3a;
   --ink:#c8dbe6; --dim:#5f7789; --amber:#f2a33c; --teal:#37c99e;

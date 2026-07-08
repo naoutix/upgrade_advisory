@@ -4,6 +4,22 @@ Compare la valeur en jeu (aUEC) de tes vaisseaux Star Citizen à leur prix réel
 ($), et trouve le meilleur upgrade possible. Application web statique,
 données mises à jour automatiquement.
 
+## Structure du dépôt
+
+```
+docs/                          Le site publié (GitHub Pages)
+├── index.html                 Page unique de l'application
+├── style.css                  Styles (thème sombre "cockpit")
+├── app.js                     Toute la logique front-end (vanilla JS, sans build)
+└── data.json                  Données générées — ne pas éditer à la main
+scripts/
+├── update-data.mjs            Génère docs/data.json (tourne dans la GitHub Action)
+└── packages.txt               (optionnel) corrections manuelles de classification
+.github/workflows/
+└── update-data.yml            Action planifiée : régénère et commite data.json
+old/                           Anciens prototypes Python (archivés, voir old/README.md)
+```
+
 ## Le site (`docs/`)
 
 `docs/` est l'application publique, pensée pour être servie telle quelle par
@@ -55,6 +71,28 @@ etc.) :
 Nom du vaisseau | Nom du pack | concierge
 ```
 Le 2ᵉ et 3ᵉ champ sont optionnels.
+
+## Prévisualiser le site en local
+
+Le site est purement statique : n'importe quel serveur de fichiers suffit.
+
+```bash
+python -m http.server 8000 -d docs
+# puis ouvrir http://localhost:8000
+```
+
+(Ouvrir `docs/index.html` directement en `file://` ne marche pas : le
+`fetch("./data.json")` est bloqué hors HTTP.)
+
+## Sécurité
+
+Les données affichées proviennent de sources externes — notamment le wiki
+communautaire, publiquement éditable. Deux garde-fous côté front :
+
+- tout texte issu de `data.json` (noms de vaisseaux, de packs, de terminaux,
+  URLs) est échappé par `esc()` dans `app.js` avant insertion dans le DOM ;
+- une Content-Security-Policy stricte dans `index.html` bloque tout script
+  inline ou tiers en défense en profondeur.
 
 ## Mettre en ligne sur GitHub Pages
 
