@@ -219,6 +219,28 @@ async function fetchShipMatrix() {
 // Pledge store RSI direct (persisted queries Apollo)
 // ---------------------------------------------------------------------------
 
+// Extrait store.listing de l'enveloppe GraphQL du storefront en distinguant
+// clairement les modes d'échec : erreurs GraphQL renvoyées par le serveur vs.
+// structure inattendue (schéma changé). Sans ça, un simple `data[0].data...`
+// lançait un TypeError opaque que l'appelant loggait comme « inaccessible »,
+// masquant un vrai changement d'API. Exporté pour être testé sans réseau.
+export function storefrontListingFromEnvelope(data, operationName, page) {
+  const ctx = `op ${operationName}, page ${page}`;
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`Réponse GraphQL storefront non conforme (${ctx}) : tableau attendu`);
+  }
+  const errors = data[0].errors;
+  if (Array.isArray(errors) && errors.length) {
+    throw new Error(`Erreurs GraphQL storefront (${ctx}) : `
+      + errors.map((e) => String(e && e.message || e)).join(" | "));
+  }
+  const listing = data[0].data?.store?.listing;
+  if (!listing || !Array.isArray(listing.resources)) {
+    throw new Error(`Structure inattendue de la réponse storefront (${ctx}) : store.listing.resources absent`);
+  }
+  return listing;
+}
+
 async function fetchStorefrontListing(operationName, sha256, facet, productId, referer, pageSize = 100) {
   const resources = [];
   let page = 1;
@@ -241,9 +263,9 @@ async function fetchStorefrontListing(operationName, sha256, facet, productId, r
       headers: { "Content-Type": "application/json", Referer: referer, Origin: "https://robertsspaceindustries.com" },
       body: JSON.stringify(payload),
     });
-    const listing = data[0].data.store.listing;
+    const listing = storefrontListingFromEnvelope(data, operationName, page);
     const batch = listing.resources;
-    if (!batch || batch.length === 0) break;
+    if (batch.length === 0) break;
     resources.push(...batch);
     total = listing.totalCount ?? resources.length;
     page += 1;

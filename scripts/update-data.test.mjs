@@ -19,6 +19,7 @@ import {
   matchShipsToConciergePacks,
   parseArgs,
   buildDataset,
+  storefrontListingFromEnvelope,
 } from "./update-data.mjs";
 
 // ---------------------------------------------------------------------------
@@ -135,6 +136,28 @@ test("parseArgs lit --out et --packages", () => {
   const a = parseArgs(["--out", "x.json", "--packages", "p.txt"]);
   assert.equal(a.out, "x.json");
   assert.equal(a.packages, "p.txt");
+});
+
+// ---------------------------------------------------------------------------
+// storefrontListingFromEnvelope
+// ---------------------------------------------------------------------------
+
+test("storefrontListingFromEnvelope extrait le listing d'une enveloppe valide", () => {
+  const env = [{ data: { store: { listing: { resources: [{ name: "Carrack" }], totalCount: 1 } } } }];
+  const listing = storefrontListingFromEnvelope(env, "Op", 1);
+  assert.equal(listing.totalCount, 1);
+  assert.equal(listing.resources[0].name, "Carrack");
+});
+
+test("storefrontListingFromEnvelope signale les erreurs GraphQL", () => {
+  const env = [{ errors: [{ message: "PersistedQueryNotFound" }] }];
+  assert.throws(() => storefrontListingFromEnvelope(env, "Op", 1), /Erreurs GraphQL.*PersistedQueryNotFound/);
+});
+
+test("storefrontListingFromEnvelope signale une structure inattendue", () => {
+  assert.throws(() => storefrontListingFromEnvelope([{ data: {} }], "Op", 2), /Structure inattendue/);
+  assert.throws(() => storefrontListingFromEnvelope([], "Op", 1), /tableau attendu/);
+  assert.throws(() => storefrontListingFromEnvelope(null, "Op", 1), /tableau attendu/);
 });
 
 // ---------------------------------------------------------------------------
