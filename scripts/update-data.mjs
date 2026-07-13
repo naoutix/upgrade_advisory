@@ -532,6 +532,20 @@ function buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
       available = p.available;
     }
 
+    // Repli quand le catalogue Standalone Ships est indisponible : si UEX
+    // pense le vaisseau achetable mais que l'outil d'upgrade RSI ne le liste
+    // pas en standalone, c'est qu'il n'est en réalité vendu qu'en pack. On
+    // corrige la disponibilité (l'outil d'upgrade ne fournit pas de nom de
+    // pack, d'où le drapeau séparé consommé plus bas).
+    let rsiPackageOnly = false;
+    if (storefrontStandalone === null && rsi !== null && available) {
+      const really = matchByBareName(p.name, rsi);
+      if (really === false) {
+        available = false;
+        rsiPackageOnly = true;
+      }
+    }
+
     let pledgePrice = p.pledge;
     if (pledgePrice == null && storefrontMatch && storefrontMatch.price != null) {
       pledgePrice = storefrontMatch.price;
@@ -552,9 +566,8 @@ function buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
         packageOnly = true;
         packName = matchedPack.pack;
         packConcierge = matchedPack.concierge;
-      } else if (storefrontStandalone === null && rsi !== null && p.available) {
-        const really = matchByBareName(p.name, rsi);
-        if (really === false) packageOnly = true;
+      } else if (rsiPackageOnly) {
+        packageOnly = true;
       }
     }
 
