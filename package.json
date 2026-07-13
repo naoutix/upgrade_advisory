@@ -4,8 +4,12 @@
   "private": true,
   "description": "Génère docs/data.json pour l'app statique Pledge Fair (GitHub Pages).",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "update-data": "node scripts/update-data.mjs"
+    "update-data": "node scripts/update-data.mjs",
+    "test": "node --test"
   },
   "dependencies": {
     "cheerio": "^1.0.0"
