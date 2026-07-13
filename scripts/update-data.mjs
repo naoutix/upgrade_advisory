@@ -639,6 +639,23 @@ export function parseArgs(argv) {
   return args;
 }
 
+const META_FLAGS = ["storefrontOk", "rsiOk", "shipMatrixOk", "conciergeWikiOk"];
+
+// L'Action tourne chaque jour, mais les données ne changent pas tous les
+// jours. Pour ne pas polluer l'historique git d'un commit quotidien inutile
+// (le gros data.json réécrit pour un simple horodatage), on réutilise
+// l'horodatage précédent quand ni les vaisseaux ni l'état des sources n'ont
+// bougé : le fichier reste alors identique octet pour octet et `git` ne voit
+// rien à committer. `generatedAt` reflète donc la dernière *évolution* des
+// données, pas la dernière exécution. Exporté pour être testé.
+export function resolveGeneratedAt(previous, ships, flags, now) {
+  const prev = previous && previous.meta;
+  if (!prev || !prev.generatedAt) return now;
+  const sameFlags = META_FLAGS.every((f) => prev[f] === flags[f]);
+  const sameShips = JSON.stringify(previous.ships) === JSON.stringify(ships);
+  return sameFlags && sameShips ? prev.generatedAt : now;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -658,13 +675,21 @@ async function main() {
   const ships = buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
     wikiConciergePacks, rsi, shipMatrix, manualPackages);
 
-  const meta = {
-    generatedAt: new Date().toISOString(),
+  const flags = {
     storefrontOk: storefrontStandalone !== null,
     rsiOk: rsi !== null,
     shipMatrixOk: shipMatrix !== null,
     conciergeWikiOk: wikiConciergePacks !== null,
   };
+
+  let previous = null;
+  if (existsSync(args.out)) {
+    try {
+      previous = JSON.parse(await readFile(args.out, "utf-8"));
+    } catch { /* fichier illisible ou absent : on régénère intégralement */ }
+  }
+  const generatedAt = resolveGeneratedAt(previous, ships, flags, new Date().toISOString());
+  const meta = { generatedAt, ...flags };
 
   await writeFile(args.out, JSON.stringify({ meta, ships }, null, 2), "utf-8");
 

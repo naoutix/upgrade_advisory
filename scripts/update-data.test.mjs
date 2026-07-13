@@ -20,6 +20,7 @@ import {
   parseArgs,
   buildDataset,
   storefrontListingFromEnvelope,
+  resolveGeneratedAt,
 } from "./update-data.mjs";
 
 // ---------------------------------------------------------------------------
@@ -158,6 +159,34 @@ test("storefrontListingFromEnvelope signale une structure inattendue", () => {
   assert.throws(() => storefrontListingFromEnvelope([{ data: {} }], "Op", 2), /Structure inattendue/);
   assert.throws(() => storefrontListingFromEnvelope([], "Op", 1), /tableau attendu/);
   assert.throws(() => storefrontListingFromEnvelope(null, "Op", 1), /tableau attendu/);
+});
+
+// ---------------------------------------------------------------------------
+// resolveGeneratedAt
+// ---------------------------------------------------------------------------
+
+const FLAGS = { storefrontOk: true, rsiOk: true, shipMatrixOk: true, conciergeWikiOk: true };
+const SHIPS = [{ name: "Carrack", pledge: 600 }];
+
+test("resolveGeneratedAt : pas de fichier précédent → nouvel horodatage", () => {
+  assert.equal(resolveGeneratedAt(null, SHIPS, FLAGS, "NOW"), "NOW");
+});
+
+test("resolveGeneratedAt : données et sources inchangées → réutilise l'ancien", () => {
+  const prev = { meta: { generatedAt: "OLD", ...FLAGS }, ships: SHIPS };
+  assert.equal(resolveGeneratedAt(prev, SHIPS, FLAGS, "NOW"), "OLD");
+});
+
+test("resolveGeneratedAt : vaisseaux modifiés → nouvel horodatage", () => {
+  const prev = { meta: { generatedAt: "OLD", ...FLAGS }, ships: SHIPS };
+  const changed = [{ name: "Carrack", pledge: 650 }];
+  assert.equal(resolveGeneratedAt(prev, changed, FLAGS, "NOW"), "NOW");
+});
+
+test("resolveGeneratedAt : une source qui tombe → nouvel horodatage", () => {
+  const prev = { meta: { generatedAt: "OLD", ...FLAGS }, ships: SHIPS };
+  const degraded = { ...FLAGS, storefrontOk: false };
+  assert.equal(resolveGeneratedAt(prev, SHIPS, degraded, "NOW"), "NOW");
 });
 
 // ---------------------------------------------------------------------------
