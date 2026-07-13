@@ -24,6 +24,7 @@
 import { load as cheerioLoad } from "cheerio";
 import { writeFile, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 const URL_RSI_UPGRADE = "https://robertsspaceindustries.com/pledge-store/api/upgrade/graphql";
 const URL_SHIP_MATRIX = "https://robertsspaceindustries.com/ship-matrix/index";
@@ -89,18 +90,18 @@ async function fetchJson(url, options = {}, timeoutMs = 30000) {
 // Utilitaires de nom
 // ---------------------------------------------------------------------------
 
-function normName(name) {
+export function normName(name) {
   const stripped = String(name).normalize("NFKD").replace(/[̀-ͯ]/g, "");
   return stripped.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
-function wikiShipUrl(name) {
+export function wikiShipUrl(name) {
   const words = name.split(/\s+/);
   const bare = words.length > 1 ? words.slice(1).join(" ") : name;
   return `${URL_WIKI_BASE}/${bare.replace(/ /g, "_")}`;
 }
 
-function matchByBareName(uexName, values) {
+export function matchByBareName(uexName, values) {
   const n = normName(uexName);
   if (Object.prototype.hasOwnProperty.call(values, n)) return values[n];
   const words = n.split(" ");
@@ -139,7 +140,7 @@ async function fetchUexJson(path) {
 // vaisseau. Il faut donc explicitement ne garder que l'entrée en USD —
 // prendre "la plus récente" toutes devises confondues piocherait parfois
 // une entrée en livres ou en euros, faussant le prix affiché en $.
-function usdPriceEntry(priceRows) {
+export function usdPriceEntry(priceRows) {
   return priceRows.find((p) => p.currency === "USD") || null;
 }
 
@@ -431,7 +432,7 @@ async function fetchRsiStandalone() {
 // Recoupement vaisseaux <-> packs
 // ---------------------------------------------------------------------------
 
-function bareNameCandidates(names) {
+export function bareNameCandidates(names) {
   const out = new Set();
   for (const name of names) {
     const n = normName(name);
@@ -447,7 +448,7 @@ function bareNameCandidates(names) {
   return out;
 }
 
-function matchShipsToPacks(packs, shipNames) {
+export function matchShipsToPacks(packs, shipNames) {
   const result = {};
   for (const pack of packs) {
     const text = normName(pack.excerpt);
@@ -460,7 +461,7 @@ function matchShipsToPacks(packs, shipNames) {
   return result;
 }
 
-function matchShipsToConciergePacks(packs) {
+export function matchShipsToConciergePacks(packs) {
   const result = {};
   const sorted = [...packs].sort((a, b) => a.ships.length - b.ships.length);
   for (const pack of sorted) {
@@ -492,7 +493,7 @@ async function loadPackagesFile(path) {
 // Fusion des données
 // ---------------------------------------------------------------------------
 
-function buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
+export function buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
                       wikiConciergePacks, rsi, shipMatrix, manualPackages) {
   const inGameByName = {};
   for (const v of Object.values(inGame)) inGameByName[normName(v.name)] = v;
@@ -607,7 +608,7 @@ function buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
 // main
 // ---------------------------------------------------------------------------
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const args = { out: "docs/data.json", packages: "scripts/packages.txt" };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--out") args.out = argv[++i];
@@ -655,7 +656,12 @@ async function main() {
     + `${nRatio} avec ratio calculable, ${nConcept} en concept.`);
 }
 
-main().catch((exc) => {
-  console.error(exc);
-  process.exit(1);
-});
+// Ne lance le pipeline que lorsque le fichier est exécuté directement
+// (node scripts/update-data.mjs). Importé depuis les tests, il n'expose que
+// ses fonctions pures, sans déclencher le moindre appel réseau.
+if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
+  main().catch((exc) => {
+    console.error(exc);
+    process.exit(1);
+  });
+}

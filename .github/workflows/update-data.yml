@@ -31,10 +31,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test
+
       - name: Run data update script
+        id: generate
         run: node scripts/update-data.mjs
 
+      # Le script réussit même quand une source est en repli (par conception :
+      # mieux vaut des données partielles que rien). On lève ici un signal
+      # visible — l'exécution est marquée en échec si une source a échoué —
+      # pour ne pas laisser des données dégradées se figer en silence.
+      - name: Check for degraded sources
+        run: |
+          node -e '
+            const { meta } = require("./docs/data.json");
+            const flags = ["storefrontOk", "rsiOk", "shipMatrixOk", "conciergeWikiOk"];
+            const down = flags.filter((f) => meta[f] === false);
+            if (down.length) {
+              console.error("::warning::Sources en repli au dernier rafraîchissement : " + down.join(", "));
+              process.exit(1);
+            }
+            console.log("Toutes les sources ont répondu.");
+          '
+
       - name: Commit and push docs/data.json if changed
+        # On committe dès que la génération a réussi, même si l'étape de
+        # contrôle a marqué l'exécution en échec pour signaler une source en
+        # repli : des données partielles valent mieux que les précédentes.
+        # En revanche, si les tests ou la génération ont échoué, on ne committe
+        # rien (l'étape 'generate' n'aurait pas le statut 'success').
+        if: always() && steps.generate.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
