@@ -19,7 +19,6 @@ scripts/
 └── packages.txt               (optionnel, à créer) corrections manuelles de classification
 .github/workflows/
 └── update-data.yml            Action planifiée : régénère et commite data.json
-old/                           Anciens prototypes Python (archivés, voir old/README.md)
 ```
 
 ## Le site (`docs/`)
@@ -109,9 +108,8 @@ communautaire, publiquement éditable. Deux garde-fous côté front :
    permissions`) pour que l'Action puisse commiter `docs/data.json`.
 4. Le site est servi à `https://<utilisateur>.github.io/<repo>/`.
 
-## Anciens scripts Python
+## Historique
 
-Les prototypes qui ont précédé ce pipeline (dont `upgrade_advisor.py`, qui a
-directement inspiré `scripts/update-data.mjs`) sont archivés dans
-[`old/`](old/), avec leur propre README détaillant leur usage. Ils ne font
-plus partie du pipeline utilisé par le site public.
+Ce pipeline Node.js a été porté d'anciens prototypes Python (dont
+`upgrade_advisor.py`). Ceux-ci ont été retirés du dépôt une fois le portage
+terminé ; ils restent consultables dans l'historique git si besoin.

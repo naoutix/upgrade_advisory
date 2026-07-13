@@ -4,15 +4,6 @@
 # Dépendances
 node_modules/
 
-# Python (ancien pipeline CLI, conservé mais pas ses caches/sorties)
-__pycache__/
-*.pyc
-
-# Sorties générées par les anciens scripts Python (régénérées à la demande)
-old/upgrade_advisor.html
-old/pledge_fair.csv
-old/.venv/
-
 # Exports / captures de travail (pas partie du site public)
 *.xlsx
 Star_Citizen_*.csv
