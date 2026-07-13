@@ -19,6 +19,8 @@ import {
   matchShipsToConciergePacks,
   parseArgs,
   buildDataset,
+  storefrontListingFromEnvelope,
+  resolveGeneratedAt,
 } from "./update-data.mjs";
 
 // ---------------------------------------------------------------------------
@@ -135,6 +137,56 @@ test("parseArgs lit --out et --packages", () => {
   const a = parseArgs(["--out", "x.json", "--packages", "p.txt"]);
   assert.equal(a.out, "x.json");
   assert.equal(a.packages, "p.txt");
+});
+
+// ---------------------------------------------------------------------------
+// storefrontListingFromEnvelope
+// ---------------------------------------------------------------------------
+
+test("storefrontListingFromEnvelope extrait le listing d'une enveloppe valide", () => {
+  const env = [{ data: { store: { listing: { resources: [{ name: "Carrack" }], totalCount: 1 } } } }];
+  const listing = storefrontListingFromEnvelope(env, "Op", 1);
+  assert.equal(listing.totalCount, 1);
+  assert.equal(listing.resources[0].name, "Carrack");
+});
+
+test("storefrontListingFromEnvelope signale les erreurs GraphQL", () => {
+  const env = [{ errors: [{ message: "PersistedQueryNotFound" }] }];
+  assert.throws(() => storefrontListingFromEnvelope(env, "Op", 1), /Erreurs GraphQL.*PersistedQueryNotFound/);
+});
+
+test("storefrontListingFromEnvelope signale une structure inattendue", () => {
+  assert.throws(() => storefrontListingFromEnvelope([{ data: {} }], "Op", 2), /Structure inattendue/);
+  assert.throws(() => storefrontListingFromEnvelope([], "Op", 1), /tableau attendu/);
+  assert.throws(() => storefrontListingFromEnvelope(null, "Op", 1), /tableau attendu/);
+});
+
+// ---------------------------------------------------------------------------
+// resolveGeneratedAt
+// ---------------------------------------------------------------------------
+
+const FLAGS = { storefrontOk: true, rsiOk: true, shipMatrixOk: true, conciergeWikiOk: true };
+const SHIPS = [{ name: "Carrack", pledge: 600 }];
+
+test("resolveGeneratedAt : pas de fichier précédent → nouvel horodatage", () => {
+  assert.equal(resolveGeneratedAt(null, SHIPS, FLAGS, "NOW"), "NOW");
+});
+
+test("resolveGeneratedAt : données et sources inchangées → réutilise l'ancien", () => {
+  const prev = { meta: { generatedAt: "OLD", ...FLAGS }, ships: SHIPS };
+  assert.equal(resolveGeneratedAt(prev, SHIPS, FLAGS, "NOW"), "OLD");
+});
+
+test("resolveGeneratedAt : vaisseaux modifiés → nouvel horodatage", () => {
+  const prev = { meta: { generatedAt: "OLD", ...FLAGS }, ships: SHIPS };
+  const changed = [{ name: "Carrack", pledge: 650 }];
+  assert.equal(resolveGeneratedAt(prev, changed, FLAGS, "NOW"), "NOW");
+});
+
+test("resolveGeneratedAt : une source qui tombe → nouvel horodatage", () => {
+  const prev = { meta: { generatedAt: "OLD", ...FLAGS }, ships: SHIPS };
+  const degraded = { ...FLAGS, storefrontOk: false };
+  assert.equal(resolveGeneratedAt(prev, SHIPS, degraded, "NOW"), "NOW");
 });
 
 // ---------------------------------------------------------------------------

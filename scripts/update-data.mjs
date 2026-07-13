@@ -219,6 +219,28 @@ async function fetchShipMatrix() {
 // Pledge store RSI direct (persisted queries Apollo)
 // ---------------------------------------------------------------------------
 
+// Extrait store.listing de l'enveloppe GraphQL du storefront en distinguant
+// clairement les modes d'échec : erreurs GraphQL renvoyées par le serveur vs.
+// structure inattendue (schéma changé). Sans ça, un simple `data[0].data...`
+// lançait un TypeError opaque que l'appelant loggait comme « inaccessible »,
+// masquant un vrai changement d'API. Exporté pour être testé sans réseau.
+export function storefrontListingFromEnvelope(data, operationName, page) {
+  const ctx = `op ${operationName}, page ${page}`;
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`Réponse GraphQL storefront non conforme (${ctx}) : tableau attendu`);
+  }
+  const errors = data[0].errors;
+  if (Array.isArray(errors) && errors.length) {
+    throw new Error(`Erreurs GraphQL storefront (${ctx}) : `
+      + errors.map((e) => String(e && e.message || e)).join(" | "));
+  }
+  const listing = data[0].data?.store?.listing;
+  if (!listing || !Array.isArray(listing.resources)) {
+    throw new Error(`Structure inattendue de la réponse storefront (${ctx}) : store.listing.resources absent`);
+  }
+  return listing;
+}
+
 async function fetchStorefrontListing(operationName, sha256, facet, productId, referer, pageSize = 100) {
   const resources = [];
   let page = 1;
@@ -241,9 +263,9 @@ async function fetchStorefrontListing(operationName, sha256, facet, productId, r
       headers: { "Content-Type": "application/json", Referer: referer, Origin: "https://robertsspaceindustries.com" },
       body: JSON.stringify(payload),
     });
-    const listing = data[0].data.store.listing;
+    const listing = storefrontListingFromEnvelope(data, operationName, page);
     const batch = listing.resources;
-    if (!batch || batch.length === 0) break;
+    if (batch.length === 0) break;
     resources.push(...batch);
     total = listing.totalCount ?? resources.length;
     page += 1;
@@ -617,6 +639,23 @@ export function parseArgs(argv) {
   return args;
 }
 
+const META_FLAGS = ["storefrontOk", "rsiOk", "shipMatrixOk", "conciergeWikiOk"];
+
+// L'Action tourne chaque jour, mais les données ne changent pas tous les
+// jours. Pour ne pas polluer l'historique git d'un commit quotidien inutile
+// (le gros data.json réécrit pour un simple horodatage), on réutilise
+// l'horodatage précédent quand ni les vaisseaux ni l'état des sources n'ont
+// bougé : le fichier reste alors identique octet pour octet et `git` ne voit
+// rien à committer. `generatedAt` reflète donc la dernière *évolution* des
+// données, pas la dernière exécution. Exporté pour être testé.
+export function resolveGeneratedAt(previous, ships, flags, now) {
+  const prev = previous && previous.meta;
+  if (!prev || !prev.generatedAt) return now;
+  const sameFlags = META_FLAGS.every((f) => prev[f] === flags[f]);
+  const sameShips = JSON.stringify(previous.ships) === JSON.stringify(ships);
+  return sameFlags && sameShips ? prev.generatedAt : now;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -636,13 +675,21 @@ async function main() {
   const ships = buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
     wikiConciergePacks, rsi, shipMatrix, manualPackages);
 
-  const meta = {
-    generatedAt: new Date().toISOString(),
+  const flags = {
     storefrontOk: storefrontStandalone !== null,
     rsiOk: rsi !== null,
     shipMatrixOk: shipMatrix !== null,
     conciergeWikiOk: wikiConciergePacks !== null,
   };
+
+  let previous = null;
+  if (existsSync(args.out)) {
+    try {
+      previous = JSON.parse(await readFile(args.out, "utf-8"));
+    } catch { /* fichier illisible ou absent : on régénère intégralement */ }
+  }
+  const generatedAt = resolveGeneratedAt(previous, ships, flags, new Date().toISOString());
+  const meta = { generatedAt, ...flags };
 
   await writeFile(args.out, JSON.stringify({ meta, ships }, null, 2), "utf-8");
 

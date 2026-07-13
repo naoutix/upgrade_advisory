@@ -67,13 +67,14 @@ input[type=search]:focus{outline:2px solid var(--focus);outline-offset:-1px}
 .tag.pk{color:var(--violet);border-color:var(--violet)}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:var(--panel2);border:1px solid var(--edge);padding:8px 10px}
+.stat.full{grid-column:1/-1}
 .stat .l{color:var(--dim);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
 .stat .v{font-size:17px;font-weight:600}
 .stat .v.amber{color:var(--amber)} .stat .v.teal{color:var(--teal)}
 .stat .d{color:var(--dim);font-size:11px}
 .hint{color:var(--dim);font-size:13px;margin-top:12px}
 
-.controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:14px;color:var(--dim);font-size:13px;letter-spacing:.05em}
+.controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;color:var(--dim);font-size:13px;letter-spacing:.05em}
 .controls label{display:flex;gap:6px;align-items:center;cursor:pointer;text-transform:uppercase}
 .controls input{accent-color:var(--amber)}
 .controls select{background:var(--panel2);border:1px solid var(--edge);color:var(--ink);

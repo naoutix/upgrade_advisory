@@ -14,10 +14,11 @@ docs/                          Le site publié (GitHub Pages)
 └── data.json                  Données générées — ne pas éditer à la main
 scripts/
 ├── update-data.mjs            Génère docs/data.json (tourne dans la GitHub Action)
-└── packages.txt               (optionnel) corrections manuelles de classification
+├── update-data.test.mjs       Tests (node --test) des fonctions pures du script
+├── packages.txt.example       Gabarit commenté des corrections manuelles
+└── packages.txt               (optionnel, à créer) corrections manuelles de classification
 .github/workflows/
 └── update-data.yml            Action planifiée : régénère et commite data.json
-old/                           Anciens prototypes Python (archivés, voir old/README.md)
 ```
 
 ## Le site (`docs/`)
@@ -61,11 +62,15 @@ Lancer manuellement :
 ```bash
 npm install
 node scripts/update-data.mjs
+npm test   # tests des fonctions pures (node --test, sans réseau)
 ```
 
 Un fichier optionnel `scripts/packages.txt` permet de corriger manuellement
 la classification d'un vaisseau (nom de pack introuvable automatiquement,
-etc.) :
+etc.). Il n'est pas versionné par défaut : copie le gabarit commenté
+[`scripts/packages.txt.example`](scripts/packages.txt.example) en
+`scripts/packages.txt`, complète-le, puis commite-le pour que la GitHub
+Action le prenne en compte. Format, un vaisseau par ligne :
 
 ```
 Nom du vaisseau | Nom du pack | concierge
@@ -103,9 +108,8 @@ communautaire, publiquement éditable. Deux garde-fous côté front :
    permissions`) pour que l'Action puisse commiter `docs/data.json`.
 4. Le site est servi à `https://<utilisateur>.github.io/<repo>/`.
 
-## Anciens scripts Python
+## Historique
 
-Les prototypes qui ont précédé ce pipeline (dont `upgrade_advisor.py`, qui a
-directement inspiré `scripts/update-data.mjs`) sont archivés dans
-[`old/`](old/), avec leur propre README détaillant leur usage. Ils ne font
-plus partie du pipeline utilisé par le site public.
+Ce pipeline Node.js a été porté d'anciens prototypes Python (dont
+`upgrade_advisor.py`). Ceux-ci ont été retirés du dépôt une fois le portage
+terminé ; ils restent consultables dans l'historique git si besoin.

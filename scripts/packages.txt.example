@@ -1,0 +1,28 @@
+# Corrections manuelles de classification des vaisseaux.
+#
+# Ce fichier est OPTIONNEL. Pour l'activer, copie-le en `scripts/packages.txt`
+# (même dossier) et commite-le : la GitHub Action lit `scripts/packages.txt`
+# à chaque exécution. Sans ce fichier, la classification repose entièrement
+# sur les sources automatiques (voir scripts/update-data.mjs).
+#
+# À quoi ça sert : forcer un vaisseau en « vendu en pack uniquement » quand
+# l'appariement automatique ne trouve pas son pack (nom de pack absent des
+# excerpts du storefront, pack Concierge non listé sur le wiki, etc.).
+#
+# Format, un vaisseau par ligne, champs séparés par « | » :
+#
+#     Nom du vaisseau | Nom du pack | concierge
+#
+#   - Champ 1 (requis)   : nom du vaisseau tel qu'affiché (ex. « Anvil Carrack »).
+#                          La casse et les accents sont normalisés, peu importe.
+#   - Champ 2 (optionnel): nom du pack à afficher. Vide = « Pack » générique.
+#   - Champ 3 (optionnel): marque le pack comme réservé aux membres Concierge.
+#                          Valeurs acceptées : concierge, oui, yes, true, 1.
+#
+# Les lignes vides et celles commençant par « # » sont ignorées.
+#
+# Exemples (à adapter / supprimer) :
+#
+# RSI Zeus Mk II CL | Zeus Prospector Pack
+# Aegis Idris-P | Legatus Pack | concierge
+# Drake Golem |

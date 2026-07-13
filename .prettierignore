@@ -1,0 +1,5 @@
+# Généré par le pipeline — ne pas reformater.
+docs/data.json
+# Dépendances et lock.
+node_modules/
+package-lock.json

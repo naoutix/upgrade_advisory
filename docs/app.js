@@ -87,7 +87,7 @@ async function loadData() {
       (META.storefrontOk ? "" : ' <span class="warn">— le catalogue officiel était indisponible au dernier rafraîchissement, données partiellement en repli.</span>')
       + (META.conciergeWikiOk ? "" : ' <span class="warn">— le wiki des packs Concierge était indisponible, ceux-ci ne sont pas détectés.</span>');
 
-    setStatus("ok", `<b>À jour</b> — actualisé automatiquement le ${formatFreshness(META.generatedAt)} (une fois par jour).`);
+    setStatus("ok", `<b>À jour</b> — dernières données du ${formatFreshness(META.generatedAt)}, vérifiées automatiquement chaque jour.`);
 
     renderList("");
     renderTables();
@@ -174,7 +174,7 @@ function renderCurrent() {
       <div class="stat"><div class="l">Prix en jeu</div>
         <div class="v mono">${s.auec != null ? fmtN(s.auec) : "—"}</div>
         <div class="d">${s.loc ? esc(s.loc) : "non vendu en jeu"}</div></div>
-      <div class="stat" style="grid-column:1/-1"><div class="l">Ratio actuel</div>
+      <div class="stat full"><div class="l">Ratio actuel</div>
         <div class="v teal mono">${s.ratio != null ? fmtN(s.ratio) + " aUEC/$" : "—"}</div></div>
     </div>
     <div class="hint">Objectif : trouver un vaisseau plus cher en pledge avec un meilleur ratio.</div>`;
@@ -312,7 +312,7 @@ function ratioTable(key, rows, opts = {}) {
       <td class="mono amb">${fmtUsd(r.pledge)}</td>
       <td class="mono">+${fmtUsd(r.cost)}</td>
       <td class="mono">${fmtN(r.auec)}<span class="loc">${esc(r.loc)}</span></td>
-      <td class="mono pos">${fmtN(r.ratio)}<span class="gainbar" style="width:${(r.ratio / maxRatio * 90).toFixed(0)}px"></span></td>
+      <td class="mono pos">${fmtN(r.ratio)}<span class="gainbar" data-w="${(r.ratio / maxRatio * 90).toFixed(0)}"></span></td>
       <td class="mono ${r.gain == null ? "" : r.gain >= 0 ? "pos" : "neg"}">${r.gain == null ? "—" : (r.gain >= 0 ? "+" : "") + r.gain.toFixed(0) + " %"}</td>
       <td class="mono">${fmtN(r.marginal)}</td>
     </tr>`).join("");
@@ -363,6 +363,13 @@ function renderTables() {
   $("tblPack").innerHTML = ratioTable("pack", c.pack, { showPack: true });
   $("tblUnavail").innerHTML = ratioTable("unavail", c.unavail);
   $("tblNoInGame").innerHTML = noInGameTable("noInGame", c.noInGame);
+  // La largeur des barres de ratio est posée via l'API DOM (et non un
+  // style="" inline dans le HTML généré), ce qui permet une CSP stricte sans
+  // 'unsafe-inline' — l'attribut style parsé depuis le HTML serait bloqué,
+  // pas une écriture programmatique sur element.style.
+  for (const bar of document.querySelectorAll(".gainbar[data-w]")) {
+    bar.style.width = bar.dataset.w + "px";
+  }
   $("cAvail").textContent = "· " + c.avail.length;
   $("cPack").textContent = "· " + c.pack.length;
   $("cUnavail").textContent = "· " + c.unavail.length;
