@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-13T08:59:09.904Z",
+    "generatedAt": "2026-07-15T07:59:03.145Z",
     "storefrontOk": true,
     "rsiOk": true,
     "shipMatrixOk": true,
@@ -2220,9 +2220,9 @@
     {
       "name": "Mirai Fury",
       "pledge": 55,
-      "available": false,
-      "packageOnly": true,
-      "packName": "Tyilui Carrier Pack",
+      "available": true,
+      "packageOnly": false,
+      "packName": null,
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fury",
@@ -2233,7 +2233,7 @@
     {
       "name": "Mirai Fury LX",
       "pledge": 55,
-      "available": false,
+      "available": true,
       "packageOnly": false,
       "packName": null,
       "packConcierge": false,
@@ -2246,10 +2246,10 @@
     {
       "name": "Mirai Fury MX",
       "pledge": 55,
-      "available": false,
-      "packageOnly": true,
-      "packName": "Dominus Pack",
-      "packConcierge": true,
+      "available": true,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fury_MX",
       "auec": 691268,
