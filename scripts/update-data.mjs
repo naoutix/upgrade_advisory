@@ -39,20 +39,25 @@ const URL_WIKI_BASE = "https://starcitizen.tools";
 const URL_WIKI_PACKAGES = URL_WIKI_BASE + "/List_of_ship_packages";
 
 const HTTP_HEADERS = {
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    + "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+    "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
   "Accept-Language": "en-US,en;q=0.9",
 };
 
 // Variantes de requêtes essayées sur l'endpoint d'upgrade RSI (API non
 // officielle : le schéma peut évoluer, d'où plusieurs formes candidates).
 const RSI_QUERY_VARIANTS = [
-  ["filterShips", `
+  [
+    "filterShips",
+    `
 query filterShips($fromFilters: [FilterConstraintValues], $toFilters: [FilterConstraintValues]) {
   to(filters: $toFilters) {
     ships { id name msrp skus { id title available price } }
   }
-}`, { fromFilters: [], toFilters: [] }],
+}`,
+    { fromFilters: [], toFilters: [] },
+  ],
   [null, "query { to { ships { id name msrp skus { id title available price } } } }", null],
   [null, "query { ships { id name msrp skus { id title available price } } }", null],
 ];
@@ -65,7 +70,7 @@ function log(msg) {
 // Réseau
 // ---------------------------------------------------------------------------
 
-async function fetchText(url, options = {}, timeoutMs = 30000) {
+export async function fetchText(url, options = {}, timeoutMs = 30000) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -92,7 +97,10 @@ async function fetchJson(url, options = {}, timeoutMs = 30000) {
 
 export function normName(name) {
   const stripped = String(name).normalize("NFKD").replace(/[̀-ͯ]/g, "");
-  return stripped.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  return stripped
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 }
 
 export function wikiShipUrl(name) {
@@ -127,8 +135,10 @@ export function matchByBareName(uexName, values) {
 
 const URL_UEX_API = "https://api.uexcorp.uk/2.0";
 
-async function fetchUexJson(path) {
-  const data = await fetchJson(`${URL_UEX_API}/${path}`, { headers: { Accept: "application/json" } });
+export async function fetchUexJson(path) {
+  const data = await fetchJson(`${URL_UEX_API}/${path}`, {
+    headers: { Accept: "application/json" },
+  });
   if (!data || data.status !== "ok" || !Array.isArray(data.data)) {
     throw new Error(`Réponse UEX API inattendue pour ${path}`);
   }
@@ -151,7 +161,16 @@ async function fetchUexRoster() {
     fetchUexJson("vehicles_prices"),
     fetchUexJson("vehicles_purchases_prices_all"),
   ]);
+  return buildUexRoster(vehicles, prices, purchases);
+}
 
+// Fusionne les trois tableaux bruts de l'API UEX en { pledge, inGame }.
+// Pur (aucun réseau), donc testable avec des fixtures. Pour chaque véhicule
+// on ne retient que la ligne de prix en USD (usdPriceEntry), et on ne garde
+// comme prix pledge que le prix standard, à défaut le prix warbond. Les
+// lignes d'achat en jeu sans prix (price_buy <= 0) ou pointant vers un
+// véhicule inconnu sont ignorées.
+export function buildUexRoster(vehicles, prices, purchases) {
   const vehicleById = new Map(vehicles.map((v) => [v.id, v]));
 
   const pricesByVehicle = new Map();
@@ -171,8 +190,11 @@ async function fetchUexRoster() {
       available = Boolean(usd.on_sale || usd.on_sale_warbond);
     }
     return {
-      key: String(v.id), name: v.name_full,
-      pledge: pledgePrice, available, concept: v.is_concept === 1,
+      key: String(v.id),
+      name: v.name_full,
+      pledge: pledgePrice,
+      available,
+      concept: v.is_concept === 1,
     };
   });
 
@@ -193,13 +215,15 @@ async function fetchUexRoster() {
 // Ship Matrix officiel RSI (statut Concept)
 // ---------------------------------------------------------------------------
 
-async function fetchShipMatrix() {
+export async function fetchShipMatrix() {
   log(`Vérification Ship Matrix (${URL_SHIP_MATRIX}) ...`);
   let data;
   try {
     data = await fetchJson(URL_SHIP_MATRIX, { headers: { Accept: "application/json" } });
   } catch (exc) {
-    log(`Avertissement: Ship Matrix inaccessible (${exc}). Statut Concept basé sur UEX uniquement.`);
+    log(
+      `Avertissement: Ship Matrix inaccessible (${exc}). Statut Concept basé sur UEX uniquement.`,
+    );
     return null;
   }
   const ships = data && data.data;
@@ -207,10 +231,19 @@ async function fetchShipMatrix() {
     log("Avertissement: réponse Ship Matrix sans liste de vaisseaux reconnaissable, ignorée.");
     return null;
   }
+  return parseShipMatrix(ships);
+}
+
+// Construit la table { nom normalisé -> estConcept } depuis la liste de
+// vaisseaux du Ship Matrix. Un vaisseau est « concept » quand son
+// production_status vaut "in-concept". Les entrées sans nom ou sans statut
+// sont ignorées. Renvoie null si rien d'exploitable. Pur, donc testable.
+export function parseShipMatrix(ships) {
   const result = {};
   for (const s of ships) {
     if (!s.name || !s.production_status) continue;
-    result[normName(String(s.name))] = String(s.production_status).trim().toLowerCase() === "in-concept";
+    result[normName(String(s.name))] =
+      String(s.production_status).trim().toLowerCase() === "in-concept";
   }
   return Object.keys(result).length ? result : null;
 }
@@ -231,36 +264,57 @@ export function storefrontListingFromEnvelope(data, operationName, page) {
   }
   const errors = data[0].errors;
   if (Array.isArray(errors) && errors.length) {
-    throw new Error(`Erreurs GraphQL storefront (${ctx}) : `
-      + errors.map((e) => String(e && e.message || e)).join(" | "));
+    throw new Error(
+      `Erreurs GraphQL storefront (${ctx}) : ` +
+        errors.map((e) => String((e && e.message) || e)).join(" | "),
+    );
   }
   const listing = data[0].data?.store?.listing;
   if (!listing || !Array.isArray(listing.resources)) {
-    throw new Error(`Structure inattendue de la réponse storefront (${ctx}) : store.listing.resources absent`);
+    throw new Error(
+      `Structure inattendue de la réponse storefront (${ctx}) : store.listing.resources absent`,
+    );
   }
   return listing;
 }
 
-async function fetchStorefrontListing(operationName, sha256, facet, productId, referer, pageSize = 100) {
+export async function fetchStorefrontListing(
+  operationName,
+  sha256,
+  facet,
+  productId,
+  referer,
+  pageSize = 100,
+) {
   const resources = [];
   let page = 1;
   let total = null;
   while (total === null || resources.length < total) {
-    const payload = [{
-      operationName,
-      variables: {
-        storeFront: "pledge",
-        query: {
-          page, limit: pageSize,
-          skus: { filtersFromTags: { tagIdentifiers: [], facetIdentifiers: [facet] }, products: [productId] },
-          sort: { field: "name", direction: "asc" },
+    const payload = [
+      {
+        operationName,
+        variables: {
+          storeFront: "pledge",
+          query: {
+            page,
+            limit: pageSize,
+            skus: {
+              filtersFromTags: { tagIdentifiers: [], facetIdentifiers: [facet] },
+              products: [productId],
+            },
+            sort: { field: "name", direction: "asc" },
+          },
         },
+        extensions: { persistedQuery: { version: 1, sha256Hash: sha256 } },
       },
-      extensions: { persistedQuery: { version: 1, sha256Hash: sha256 } },
-    }];
+    ];
     const data = await fetchJson(URL_STOREFRONT_GRAPHQL, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Referer: referer, Origin: "https://robertsspaceindustries.com" },
+      headers: {
+        "Content-Type": "application/json",
+        Referer: referer,
+        Origin: "https://robertsspaceindustries.com",
+      },
       body: JSON.stringify(payload),
     });
     const listing = storefrontListingFromEnvelope(data, operationName, page);
@@ -274,16 +328,21 @@ async function fetchStorefrontListing(operationName, sha256, facet, productId, r
   return resources;
 }
 
-async function fetchStorefrontStandaloneShips() {
+export async function fetchStorefrontStandaloneShips() {
   log(`Vérification du catalogue Standalone Ships (${URL_STOREFRONT_GRAPHQL}) ...`);
   let resources;
   try {
     resources = await fetchStorefrontListing(
-      "GetBrowseSkusStandaloneShipByFilter", HASH_STANDALONE_SHIPS,
-      "extras-standalone-ships", PRODUCT_ID_STANDALONE_SHIPS,
-      "https://robertsspaceindustries.com/store/pledge/browse/extras/standalone-ships");
+      "GetBrowseSkusStandaloneShipByFilter",
+      HASH_STANDALONE_SHIPS,
+      "extras-standalone-ships",
+      PRODUCT_ID_STANDALONE_SHIPS,
+      "https://robertsspaceindustries.com/store/pledge/browse/extras/standalone-ships",
+    );
   } catch (exc) {
-    log(`Avertissement: catalogue Standalone Ships inaccessible (${exc}). Repli sur l'outil d'upgrade RSI / UEX.`);
+    log(
+      `Avertissement: catalogue Standalone Ships inaccessible (${exc}). Repli sur l'outil d'upgrade RSI / UEX.`,
+    );
     return null;
   }
   const result = {};
@@ -303,10 +362,16 @@ async function fetchStorefrontPacks() {
   let resources;
   try {
     resources = await fetchStorefrontListing(
-      "GetBrowseSkusByFilter", HASH_PACKS, "extras-packs", PRODUCT_ID_PACKS,
-      "https://robertsspaceindustries.com/store/pledge/browse/extras/packs");
+      "GetBrowseSkusByFilter",
+      HASH_PACKS,
+      "extras-packs",
+      PRODUCT_ID_PACKS,
+      "https://robertsspaceindustries.com/store/pledge/browse/extras/packs",
+    );
   } catch (exc) {
-    log(`Avertissement: catalogue Packs inaccessible (${exc}). Les noms de pack proviendront uniquement de packages.txt.`);
+    log(
+      `Avertissement: catalogue Packs inaccessible (${exc}). Les noms de pack proviendront uniquement de packages.txt.`,
+    );
     return null;
   }
   return resources.filter((r) => r.name).map((r) => ({ name: r.name, excerpt: r.excerpt || "" }));
@@ -321,14 +386,16 @@ async function fetchStorefrontPacks() {
 // texte brut) et les joint avec 'sep'. Nécessaire ici car "Included ships"
 // utilise une liste <ul><li> sur le wiki, pas des <br>.
 function collectText($, node, texts) {
-  $(node).contents().each((_, child) => {
-    if (child.type === "text") {
-      const t = (child.data || "").trim();
-      if (t) texts.push(t);
-    } else if (child.type === "tag") {
-      collectText($, child, texts);
-    }
-  });
+  $(node)
+    .contents()
+    .each((_, child) => {
+      if (child.type === "text") {
+        const t = (child.data || "").trim();
+        if (t) texts.push(t);
+      } else if (child.type === "tag") {
+        collectText($, child, texts);
+      }
+    });
 }
 
 function getTextJoined($, el, sep = "|") {
@@ -343,15 +410,29 @@ async function fetchWikiConciergePacks() {
   try {
     html = await fetchText(URL_WIKI_PACKAGES);
   } catch (exc) {
-    log(`Avertissement: wiki des packs inaccessible (${exc}). Les packs Concierge ne seront pas détectés automatiquement.`);
+    log(
+      `Avertissement: wiki des packs inaccessible (${exc}). Les packs Concierge ne seront pas détectés automatiquement.`,
+    );
     return null;
   }
+  return parseWikiConciergePacks(html);
+}
+
+// Extrait les packs réservés aux membres Concierge des tables du wiki. Ne
+// retient que les lignes dont la colonne « Availability » mentionne
+// "concierge", et lit les vaisseaux inclus (colonne « Included ships »,
+// souvent une liste <ul><li>). Pur (prend le HTML brut), donc testable via
+// cheerio sans réseau. Renvoie null si aucun pack Concierge trouvé.
+export function parseWikiConciergePacks(html) {
   const $ = cheerioLoad(html);
   const packs = [];
   $("table.wikitable, table.article-table").each((_, table) => {
     const rows = $(table).find("tr").toArray();
     if (rows.length === 0) return;
-    const headers = $(rows[0]).find("th, td").map((__, c) => $(c).text().trim()).get();
+    const headers = $(rows[0])
+      .find("th, td")
+      .map((__, c) => $(c).text().trim())
+      .get();
     const iName = headers.indexOf("Name");
     const iShips = headers.indexOf("Included ships");
     const iAvail = headers.indexOf("Availability");
@@ -363,7 +444,10 @@ async function fetchWikiConciergePacks() {
       if (!availText.includes("concierge")) continue;
       const name = cells.eq(iName).text().trim();
       const shipsText = getTextJoined($, cells.get(iShips), "|");
-      const ships = shipsText.split("|").map((s) => s.trim()).filter(Boolean);
+      const ships = shipsText
+        .split("|")
+        .map((s) => s.trim())
+        .filter(Boolean);
       if (name && ships.length) packs.push({ name, ships });
     }
   });
@@ -376,7 +460,8 @@ async function fetchWikiConciergePacks() {
 
 function findShipsList(node) {
   if (Array.isArray(node)) {
-    if (node.length && node.every((x) => x && typeof x === "object" && "name" in x && "skus" in x)) return node;
+    if (node.length && node.every((x) => x && typeof x === "object" && "name" in x && "skus" in x))
+      return node;
     for (const item of node) {
       const found = findShipsList(item);
       if (found) return found;
@@ -390,7 +475,7 @@ function findShipsList(node) {
   return null;
 }
 
-function parseRsiResponse(data) {
+export function parseRsiResponse(data) {
   const ships = findShipsList(data);
   if (!ships) {
     log("Avertissement: réponse RSI sans liste de vaisseaux reconnaissable, ignorée.");
@@ -416,11 +501,15 @@ async function rsiPost(query, variables, operationName) {
   });
   const text = await resp.text();
   let data = null;
-  try { data = JSON.parse(text); } catch { /* pas du JSON */ }
+  try {
+    data = JSON.parse(text);
+  } catch {
+    /* pas du JSON */
+  }
   return [resp.status, data, text];
 }
 
-async function fetchRsiStandalone() {
+export async function fetchRsiStandalone() {
   log(`Vérification RSI (${URL_RSI_UPGRADE}) ...`);
   try {
     const [status0, , text0] = await rsiPost("query { __typename }");
@@ -445,7 +534,9 @@ async function fetchRsiStandalone() {
     for (const e of [...new Set(errors)]) log(`  - ${e}`);
     return null;
   } catch (exc) {
-    log(`Avertissement: API RSI inaccessible (${exc}). Classification 'Package' basée sur packages.txt uniquement.`);
+    log(
+      `Avertissement: API RSI inaccessible (${exc}). Classification 'Package' basée sur packages.txt uniquement.`,
+    );
     return null;
   }
 }
@@ -476,7 +567,9 @@ export function matchShipsToPacks(packs, shipNames) {
     const text = normName(pack.excerpt);
     for (const candidate of shipNames) {
       if (candidate in result) continue;
-      const re = new RegExp(`(?:^|\\s)${candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\s|$)`);
+      const re = new RegExp(
+        `(?:^|\\s)${candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\s|$)`,
+      );
       if (re.test(text)) result[candidate] = { pack: pack.name, concierge: false };
     }
   }
@@ -496,7 +589,7 @@ export function matchShipsToConciergePacks(packs) {
   return result;
 }
 
-async function loadPackagesFile(path) {
+export async function loadPackagesFile(path) {
   const out = {};
   if (!path || !existsSync(path)) return out;
   const text = await readFile(path, "utf-8");
@@ -505,7 +598,8 @@ async function loadPackagesFile(path) {
     if (!line || line.startsWith("#")) continue;
     const parts = line.split("|").map((p) => p.trim());
     const pack = parts.length > 1 && parts[1] ? parts[1] : null;
-    const concierge = parts.length > 2 && ["concierge", "oui", "yes", "true", "1"].includes(parts[2].toLowerCase());
+    const concierge =
+      parts.length > 2 && ["concierge", "oui", "yes", "true", "1"].includes(parts[2].toLowerCase());
     out[normName(parts[0])] = { pack, concierge };
   }
   return out;
@@ -515,8 +609,16 @@ async function loadPackagesFile(path) {
 // Fusion des données
 // ---------------------------------------------------------------------------
 
-export function buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
-                      wikiConciergePacks, rsi, shipMatrix, manualPackages) {
+export function buildDataset(
+  inGame,
+  pledge,
+  storefrontStandalone,
+  storefrontPacks,
+  wikiConciergePacks,
+  rsi,
+  shipMatrix,
+  manualPackages,
+) {
   const inGameByName = {};
   for (const v of Object.values(inGame)) inGameByName[normName(v.name)] = v;
   const used = new Set();
@@ -546,8 +648,8 @@ export function buildDataset(inGame, pledge, storefrontStandalone, storefrontPac
     if (ig) used.add(ig);
     const best = locations.length ? locations[0] : null;
 
-    const storefrontMatch = storefrontStandalone !== null
-      ? matchByBareName(p.name, storefrontStandalone) : null;
+    const storefrontMatch =
+      storefrontStandalone !== null ? matchByBareName(p.name, storefrontStandalone) : null;
     let available;
     if (storefrontStandalone !== null) {
       available = Boolean(storefrontMatch && storefrontMatch.available);
@@ -584,7 +686,9 @@ export function buildDataset(inGame, pledge, storefrontStandalone, storefrontPac
       packConcierge = manualPackages[manualKey].concierge;
       available = false;
     } else if (!available) {
-      const matchedPack = Object.keys(shipToPack).length ? matchByBareName(p.name, shipToPack) : null;
+      const matchedPack = Object.keys(shipToPack).length
+        ? matchByBareName(p.name, shipToPack)
+        : null;
       if (matchedPack) {
         packageOnly = true;
         packName = matchedPack.pack;
@@ -614,11 +718,17 @@ export function buildDataset(inGame, pledge, storefrontStandalone, storefrontPac
     const locations = [...ig.locations].sort((a, b) => a.auec - b.auec);
     const best = locations[0];
     ships.push({
-      name: ig.name, pledge: null, available: false,
-      packageOnly: false, packName: null, packConcierge: false,
+      name: ig.name,
+      pledge: null,
+      available: false,
+      packageOnly: false,
+      packName: null,
+      packConcierge: false,
       concept: conceptFor(ig.name, false),
       wikiUrl: wikiShipUrl(ig.name),
-      auec: best.auec, loc: best.loc, ratio: null,
+      auec: best.auec,
+      loc: best.loc,
+      ratio: null,
     });
   }
 
@@ -631,10 +741,11 @@ export function buildDataset(inGame, pledge, storefrontStandalone, storefrontPac
 // ---------------------------------------------------------------------------
 
 export function parseArgs(argv) {
-  const args = { out: "docs/data.json", packages: "scripts/packages.txt" };
+  const args = { out: "docs/data.json", packages: "scripts/packages.txt", force: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--out") args.out = argv[++i];
     else if (argv[i] === "--packages") args.packages = argv[++i];
+    else if (argv[i] === "--force") args.force = true;
   }
   return args;
 }
@@ -656,6 +767,33 @@ export function resolveGeneratedAt(previous, ships, flags, now) {
   return sameFlags && sameShips ? prev.generatedAt : now;
 }
 
+// Les quatre drapeaux meta ne surveillent que les sources *auxiliaires*
+// (storefront, RSI, Ship Matrix, wiki). La colonne vertébrale, elle, est
+// UEX : `fetchUexJson` n'exige qu'un `status: "ok"` et un tableau, si bien
+// qu'une réponse UEX vidée ou tronquée passerait avec les quatre drapeaux au
+// vert — et un data.json quasi vide se figerait en silence. On garde donc un
+// filet : roster sous un plancher absolu, ou effondrement brutal par rapport
+// au fichier précédent. Pur (aucun I/O), donc testable.
+export function rosterHealth(ships, previous, { minShips = 50, dropRatio = 0.5 } = {}) {
+  const count = ships.length;
+  if (count < minShips) {
+    return {
+      ok: false,
+      reason: `roster anormalement court : ${count} vaisseaux (plancher ${minShips})`,
+    };
+  }
+  const prevCount = (previous && previous.ships && previous.ships.length) || 0;
+  if (prevCount >= minShips && count < prevCount * dropRatio) {
+    return {
+      ok: false,
+      reason:
+        `chute brutale du roster : ${count} vaisseaux contre ${prevCount} au run précédent ` +
+        `(< ${Math.round(dropRatio * 100)} %)`,
+    };
+  }
+  return { ok: true };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -672,8 +810,16 @@ async function main() {
 
   const manualPackages = await loadPackagesFile(args.packages);
 
-  const ships = buildDataset(inGame, pledge, storefrontStandalone, storefrontPacks,
-    wikiConciergePacks, rsi, shipMatrix, manualPackages);
+  const ships = buildDataset(
+    inGame,
+    pledge,
+    storefrontStandalone,
+    storefrontPacks,
+    wikiConciergePacks,
+    rsi,
+    shipMatrix,
+    manualPackages,
+  );
 
   const flags = {
     storefrontOk: storefrontStandalone !== null,
@@ -686,8 +832,26 @@ async function main() {
   if (existsSync(args.out)) {
     try {
       previous = JSON.parse(await readFile(args.out, "utf-8"));
-    } catch { /* fichier illisible ou absent : on régénère intégralement */ }
+    } catch {
+      /* fichier illisible ou absent : on régénère intégralement */
+    }
   }
+
+  // Filet de sécurité UEX : contrairement aux sources auxiliaires (drapeaux
+  // meta), un roster effondré ne se reflète nulle part. Plutôt que de publier
+  // un data.json quasi vide, on laisse le fichier précédent en place et on
+  // sort en échec — l'Action marque le run en erreur (donc notification) et
+  // n'ayant pas réussi, l'étape de commit est sautée. --force pour passer
+  // outre si la baisse est légitime.
+  const health = rosterHealth(ships, previous);
+  if (!health.ok && !args.force) {
+    log(`ERREUR: ${health.reason}.`);
+    log(`${args.out} n'est PAS réécrit : les données précédentes sont préservées.`);
+    log("Si cette baisse est légitime, relancer avec --force pour écraser malgré tout.");
+    process.exitCode = 1;
+    return;
+  }
+
   const generatedAt = resolveGeneratedAt(previous, ships, flags, new Date().toISOString());
   const meta = { generatedAt, ...flags };
 
@@ -698,9 +862,11 @@ async function main() {
   const nPkConcierge = ships.filter((s) => s.packageOnly && s.packConcierge).length;
   const nRatio = ships.filter((s) => s.ratio !== null).length;
   const nConcept = ships.filter((s) => s.concept).length;
-  log(`${args.out} généré : ${ships.length} vaisseaux — ${nAv} achetables standalone, `
-    + `${nPk} en pack uniquement (dont ${nPkConcierge} Concierge), `
-    + `${nRatio} avec ratio calculable, ${nConcept} en concept.`);
+  log(
+    `${args.out} généré : ${ships.length} vaisseaux — ${nAv} achetables standalone, ` +
+      `${nPk} en pack uniquement (dont ${nPkConcierge} Concierge), ` +
+      `${nRatio} avec ratio calculable, ${nConcept} en concept.`,
+  );
 }
 
 // Ne lance le pipeline que lorsque le fichier est exécuté directement
