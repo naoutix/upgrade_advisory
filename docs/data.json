@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-16T08:04:03.713Z",
+    "generatedAt": "2026-07-17T08:00:53.435Z",
     "storefrontOk": true,
     "rsiOk": true,
     "shipMatrixOk": true,
@@ -1212,9 +1212,9 @@
       "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/MOTH",
-      "auec": null,
-      "loc": null,
-      "ratio": null
+      "auec": 8483740,
+      "loc": "New Deal Lorville",
+      "ratio": 26932.51
     },
     {
       "name": "Argo MPUV Cargo",
