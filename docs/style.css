@@ -340,6 +340,47 @@ td.ship a:hover {
   cursor: pointer;
   text-transform: uppercase;
 }
+/* Réglage sans effet dans le mode courant (ex. « meilleur ratio uniquement »
+   en mode catalogue) : grisé, mais toujours lisible. */
+.controls label.off {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* Bandeau expliquant le mode courant : occupe toute la largeur des contrôles. */
+.modeNote {
+  flex-basis: 100%;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+.modeNote b {
+  color: var(--amber);
+}
+
+/* Retour au catalogue complet depuis un vaisseau sélectionné. */
+.clearsel {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: var(--panel2);
+  border: 1px solid var(--edge);
+  color: var(--dim);
+  font:
+    600 12px "Rajdhani",
+    sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.clearsel:hover {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+.clearsel:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
 .controls input {
   accent-color: var(--amber);
 }

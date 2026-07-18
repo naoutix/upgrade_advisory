@@ -130,15 +130,51 @@ export function computeCandidates(ships, base, opts = {}) {
   }[sortBy];
   withRatio.sort(cmp);
   noInGame.sort((a, b) => a.pledge - b.pledge);
+  return { ...groupByAvailability(withRatio, conciergeMode), noInGame };
+}
+
+/**
+ * Répartit des lignes déjà triées dans les 3 groupes de disponibilité
+ * (achetable seul / pack visible / pas en vente). Partagé par
+ * computeCandidates() et computeCatalog() pour que les deux modes classent
+ * exactement de la même façon.
+ */
+export function groupByAvailability(rows, conciergeMode) {
   return {
-    avail: withRatio.filter((r) => r.available && !r.packageOnly),
-    pack: withRatio.filter((r) => r.packageOnly && (conciergeMode || !r.packConcierge)),
-    unavail: withRatio.filter(
+    avail: rows.filter((r) => r.available && !r.packageOnly),
+    pack: rows.filter((r) => r.packageOnly && (conciergeMode || !r.packConcierge)),
+    unavail: rows.filter(
       (r) =>
         (!r.available && !r.packageOnly) || (r.packageOnly && r.packConcierge && !conciergeMode),
     ),
-    noInGame,
   };
+}
+
+/**
+ * Mode catalogue : tout le catalogue, sans vaisseau de départ. Mêmes 4 groupes
+ * que computeCandidates(), mais aucune notion propre à l'upgrade (cost,
+ * marginal, gain) puisqu'il n'y a rien à comparer. Sert à parcourir les
+ * vaisseaux et leurs ratios sans devoir d'abord sélectionner, par exemple, le
+ * vaisseau le moins cher.
+ *
+ * Les tris propres à l'upgrade retombent sur leur équivalent absolu :
+ * `cost` → prix pledge croissant, `marginal` → ratio décroissant.
+ *
+ * @param {Array}  ships le catalogue complet
+ * @param {Object} opts  { sortBy, conciergeMode }
+ */
+export function computeCatalog(ships, opts = {}) {
+  const { sortBy = "ratio", conciergeMode = false } = opts;
+  const withRatio = [];
+  const noInGame = [];
+  for (const s of ships) {
+    if (s.pledge == null) continue; // sans prix pledge, rien à comparer
+    (s.ratio == null ? noInGame : withRatio).push({ ...s });
+  }
+  const byPledge = sortBy === "pledge" || sortBy === "cost";
+  withRatio.sort(byPledge ? (a, b) => a.pledge - b.pledge : (a, b) => b.ratio - a.ratio);
+  noInGame.sort((a, b) => a.pledge - b.pledge);
+  return { ...groupByAvailability(withRatio, conciergeMode), noInGame };
 }
 
 /* ---------------------------------------------------------------------------

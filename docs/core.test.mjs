@@ -23,6 +23,7 @@ import {
   statusRank,
   tagsOf,
   computeCandidates,
+  computeCatalog,
   applyTableState,
   thSort,
 } from "./core.js";
@@ -366,6 +367,106 @@ test("computeCandidates : noInGame trié par prix pledge croissant", () => {
     c.noInGame.map((r) => r.name),
     ["N1", "N2"],
   );
+});
+
+// ---------------------------------------------------------------------------
+// computeCatalog — mode catalogue (aucun vaisseau de départ)
+// ---------------------------------------------------------------------------
+
+test("computeCatalog inclut tout le catalogue, y compris les moins chers", () => {
+  const { ships } = fixtureShips();
+  const c = computeCatalog(ships);
+  const names = [...c.avail, ...c.pack, ...c.unavail, ...c.noInGame].map((r) => r.name).sort();
+  assert.deepEqual(names, [
+    "AvailGood",
+    "Base",
+    "Cheaper",
+    "Equal",
+    "NoGame",
+    "PackConc",
+    "PackVis",
+    "Unavail",
+  ]);
+});
+
+test("computeCatalog écarte les vaisseaux sans prix pledge", () => {
+  const c = computeCatalog([
+    { name: "Ok", pledge: 100, ratio: 10, available: true, packageOnly: false },
+    { name: "NoPledge", pledge: null, ratio: 10, available: true, packageOnly: false },
+  ]);
+  assert.deepEqual(
+    c.avail.map((r) => r.name),
+    ["Ok"],
+  );
+});
+
+test("computeCatalog n'expose aucune donnée propre à l'upgrade", () => {
+  const { ships } = fixtureShips();
+  const row = computeCatalog(ships).avail[0];
+  assert.equal(row.cost, undefined);
+  assert.equal(row.gain, undefined);
+  assert.equal(row.marginal, undefined);
+});
+
+test("computeCatalog utilise les mêmes groupes que computeCandidates", () => {
+  const { ships } = fixtureShips();
+  const c = computeCatalog(ships);
+  assert.deepEqual(
+    c.pack.map((r) => r.name),
+    ["PackVis"],
+  );
+  assert.deepEqual(c.unavail.map((r) => r.name).sort(), ["PackConc", "Unavail"]);
+  assert.deepEqual(
+    c.noInGame.map((r) => r.name),
+    ["NoGame"],
+  );
+  const conc = computeCatalog(ships, { conciergeMode: true });
+  assert.equal(conc.pack.map((r) => r.name).includes("PackConc"), true);
+  assert.deepEqual(
+    conc.unavail.map((r) => r.name),
+    ["Unavail"],
+  );
+});
+
+test("computeCatalog trie par ratio décroissant par défaut", () => {
+  const { ships } = fixtureShips();
+  assert.deepEqual(
+    computeCatalog(ships).avail.map((r) => r.name),
+    ["Cheaper", "Equal", "AvailGood", "Base"], // 50, 50, 20, 10
+  );
+});
+
+test("computeCatalog : les tris propres à l'upgrade retombent sur un équivalent", () => {
+  const { ships } = fixtureShips();
+  const byPledge = computeCatalog(ships, { sortBy: "pledge" }).avail.map((r) => r.name);
+  assert.deepEqual(byPledge, ["Cheaper", "Base", "Equal", "AvailGood"]); // 90, 100, 100, 200
+  // cost → prix pledge croissant ; marginal → ratio décroissant.
+  assert.deepEqual(
+    computeCatalog(ships, { sortBy: "cost" }).avail.map((r) => r.name),
+    byPledge,
+  );
+  assert.deepEqual(
+    computeCatalog(ships, { sortBy: "marginal" }).avail.map((r) => r.name),
+    computeCatalog(ships, { sortBy: "ratio" }).avail.map((r) => r.name),
+  );
+});
+
+test("computeCatalog : noInGame trié par prix pledge croissant", () => {
+  const ships = [
+    { name: "N2", pledge: 500, ratio: null, available: false, packageOnly: false },
+    { name: "N1", pledge: 300, ratio: null, available: false, packageOnly: false },
+  ];
+  assert.deepEqual(
+    computeCatalog(ships).noInGame.map((r) => r.name),
+    ["N1", "N2"],
+  );
+});
+
+test("computeCatalog ne mute pas les vaisseaux d'entrée", () => {
+  const ships = [{ name: "A", pledge: 100, ratio: 10, available: true, packageOnly: false }];
+  const row = computeCatalog(ships).avail[0];
+  row.ratio = 999;
+  assert.equal(ships[0].ratio, 10);
 });
 
 // ---------------------------------------------------------------------------

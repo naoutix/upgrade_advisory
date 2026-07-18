@@ -11,7 +11,12 @@
 //   renderList()    → colonne de gauche : choisir son vaisseau actuel
 //   renderCurrent() → fiche du vaisseau sélectionné
 //   candidates()    → lit l'état de l'UI puis délègue à computeCandidates()
+//                     ou, sans sélection, à computeCatalog()
 //   renderTables()  → affiche les 4 tableaux, avec tri/filtre par tableau
+//
+// Deux modes : sans vaisseau sélectionné, la page montre tout le catalogue
+// (mêmes groupes, sans les colonnes propres à l'upgrade) ; avec une sélection,
+// elle ne montre que les upgrades possibles et leur coût.
 //
 // Toute la logique déterministe (échappement, formatage, calcul des
 // candidats, tri/filtre) vit dans core.js, testée sans navigateur
@@ -28,6 +33,7 @@ import {
   statusRank,
   tagsOf,
   computeCandidates,
+  computeCatalog,
   applyTableState,
   thSort,
 } from "./core.js";
@@ -119,12 +125,8 @@ function renderList(filter) {
     b.setAttribute("role", "option");
     if (selected && selected.name === s.name) b.className = "sel";
     b.innerHTML = `<span>${esc(s.name)}</span><span class="p mono">${fmtUsd(s.pledge)}</span>`;
-    b.onclick = () => {
-      selected = s;
-      renderList($("search").value);
-      renderCurrent();
-      renderTables();
-    };
+    // Re-cliquer le vaisseau déjà sélectionné le désélectionne → catalogue.
+    b.onclick = () => selectShip(selected && selected.name === s.name ? null : s);
     box.appendChild(b);
   }
 }
@@ -160,10 +162,15 @@ function renderCurrent() {
  * ------------------------------------------------------------------------- */
 
 function candidates() {
+  const sortBy = $("sortBy").value;
+  const conciergeMode = $("conciergeMode").checked;
+  // Sans vaisseau de départ : mode catalogue, on montre tout (mêmes groupes,
+  // mais aucune colonne propre à l'upgrade — il n'y a rien à comparer).
+  if (!selected) return computeCatalog(SHIPS, { sortBy, conciergeMode });
   return computeCandidates(SHIPS, selected, {
     onlyBetter: $("onlyBetter").checked,
-    sortBy: $("sortBy").value,
-    conciergeMode: $("conciergeMode").checked,
+    sortBy,
+    conciergeMode,
   });
 }
 
@@ -207,9 +214,15 @@ function setFilter(key, value) {
  * Rendu des tableaux
  * ------------------------------------------------------------------------- */
 
-/** Tableau des candidats avec ratio calculable (groupes avail/pack/unavail). */
+/**
+ * Tableau des vaisseaux avec ratio calculable (groupes avail/pack/unavail).
+ * En mode catalogue (`opts.catalog`), les colonnes propres à l'upgrade — coût,
+ * gain de ratio, rendement marginal — sont omises : elles n'ont de sens que
+ * relativement à un vaisseau de départ.
+ */
 function ratioTable(key, rows, opts = {}) {
   const st = tableState[key];
+  const upgrade = !opts.catalog;
   rows = applyTableState(st, rows, opts.showPack ? ["name", "packName"] : ["name"]);
   if (!rows.length) return '<div class="none">Aucun vaisseau ne remplit les critères.</div>';
   const maxRatio = Math.max(...rows.map((r) => r.ratio));
@@ -221,11 +234,15 @@ function ratioTable(key, rows, opts = {}) {
       <td class="${r.concept ? "blu" : "pos"}">${r.concept ? "Concept" : "Fly Ready"}</td>
       ${opts.showPack ? `<td>${packTag(r)}</td>` : ""}
       <td class="mono amb">${fmtUsd(r.pledge)}</td>
-      <td class="mono">+${fmtUsd(r.cost)}</td>
+      ${upgrade ? `<td class="mono">+${fmtUsd(r.cost)}</td>` : ""}
       <td class="mono">${fmtN(r.auec)}<span class="loc">${esc(r.loc)}</span></td>
       <td class="mono pos">${fmtN(r.ratio)}<span class="gainbar" data-w="${((r.ratio / maxRatio) * 90).toFixed(0)}"></span></td>
-      <td class="mono ${r.gain == null ? "" : r.gain >= 0 ? "pos" : "neg"}">${r.gain == null ? "—" : (r.gain >= 0 ? "+" : "") + r.gain.toFixed(0) + " %"}</td>
-      <td class="mono">${fmtN(r.marginal)}</td>
+      ${
+        upgrade
+          ? `<td class="mono ${r.gain == null ? "" : r.gain >= 0 ? "pos" : "neg"}">${r.gain == null ? "—" : (r.gain >= 0 ? "+" : "") + r.gain.toFixed(0) + " %"}</td>
+      <td class="mono">${fmtN(r.marginal)}</td>`
+          : ""
+      }
     </tr>`,
     )
     .join("");
@@ -233,17 +250,27 @@ function ratioTable(key, rows, opts = {}) {
     <thead><tr>
       ${thSort(st, "name", "Vaisseau")}${thSort(st, "concept", "Concept")}
       ${opts.showPack ? thSort(st, "packName", "Statut pledge store") : ""}
-      ${thSort(st, "pledge", "Pledge")}${thSort(st, "cost", "Coût upgrade")}
+      ${thSort(st, "pledge", "Pledge")}${upgrade ? thSort(st, "cost", "Coût upgrade") : ""}
       ${thSort(st, "auec", "Prix en jeu (aUEC)")}
-      ${thSort(st, "ratio", "Ratio absolu (aUEC/$)", "Valeur du vaisseau cible ÷ son prix complet — comme si tu l'achetais neuf")}
-      ${thSort(st, "gain", "Gain ratio")}
-      ${thSort(st, "marginal", "Rendement de l'upgrade (aUEC/$)", "Ce que rapporte précisément CET upgrade : aUEC gagnés ÷ $ réellement dépensés")}
+      ${thSort(st, "ratio", "Ratio absolu (aUEC/$)", "Valeur du vaisseau ÷ son prix complet — comme si tu l'achetais neuf")}
+      ${
+        upgrade
+          ? thSort(st, "gain", "Gain ratio") +
+            thSort(
+              st,
+              "marginal",
+              "Rendement de l'upgrade (aUEC/$)",
+              "Ce que rapporte précisément CET upgrade : aUEC gagnés ÷ $ réellement dépensés",
+            )
+          : ""
+      }
     </tr></thead><tbody>${tr}</tbody></table>`;
 }
 
 /** Tableau des candidats sans prix en jeu connu (groupe noInGame). */
-function noInGameTable(key, rows) {
+function noInGameTable(key, rows, opts = {}) {
   const st = tableState[key];
+  const upgrade = !opts.catalog;
   const conciergeMode = $("conciergeMode").checked;
   rows = rows.map((r) => ({ ...r, status: statusRank(r, conciergeMode) }));
   rows = applyTableState(st, rows, ["name"]);
@@ -256,32 +283,52 @@ function noInGameTable(key, rows) {
       <td class="${r.concept ? "blu" : "pos"}">${r.concept ? "Concept" : "Fly Ready"}</td>
       <td>${tagsOf(r, conciergeMode, false)}</td>
       <td class="mono amb">${fmtUsd(r.pledge)}</td>
-      <td class="mono">+${fmtUsd(r.cost)}</td>
+      ${upgrade ? `<td class="mono">+${fmtUsd(r.cost)}</td>` : ""}
     </tr>`,
     )
     .join("");
   return `<table>
     <thead><tr>
       ${thSort(st, "name", "Vaisseau")}${thSort(st, "concept", "Concept")}${thSort(st, "status", "Statut pledge store")}
-      ${thSort(st, "pledge", "Pledge")}${thSort(st, "cost", "Coût upgrade")}
+      ${thSort(st, "pledge", "Pledge")}${upgrade ? thSort(st, "cost", "Coût upgrade") : ""}
     </tr></thead><tbody>${tr}</tbody></table>`;
 }
 
+/**
+ * Adapte les libellés au mode courant : catalogue (aucun vaisseau
+ * sélectionné) ou upgrade (comparaison depuis le vaisseau sélectionné).
+ */
+function renderMode(catalog) {
+  $("clearSelection").hidden = catalog;
+  $("modeNote").innerHTML = catalog
+    ? "<b>Catalogue complet</b> — tous les vaisseaux et leurs ratios. Sélectionne ton vaisseau à gauche pour ne voir que les upgrades possibles et leur coût."
+    : "<b>Upgrades possibles</b> — uniquement les vaisseaux plus chers que le tien (règle du CCU).";
+  // Les réglages propres à l'upgrade n'ont pas de sens sans vaisseau de départ.
+  $("onlyBetter").disabled = catalog;
+  $("onlyBetter").closest("label").classList.toggle("off", catalog);
+  $("descAvail").textContent = catalog
+    ? "Tous les vaisseaux achetables dès aujourd'hui, seuls, sur le site officiel. Clique un en-tête de colonne pour trier."
+    : "Vaisseaux que tu peux acheter dès aujourd'hui, seuls, sur le site officiel. Clique un en-tête de colonne pour trier.";
+  $("descNoInGame").textContent = catalog
+    ? "Vaisseaux dont on ne connaît pas encore le prix en aUEC dans le jeu — souvent parce qu'ils n'existent pas encore en jeu (statut \"Concept\") ou qu'aucun vendeur ne les propose actuellement."
+    : "Vaisseaux plus chers que le tien, mais dont on ne connaît pas encore le prix en aUEC dans le jeu — souvent parce qu'ils n'existent pas encore en jeu (statut \"Concept\") ou qu'aucun vendeur ne les propose actuellement.";
+}
+
 function renderTables() {
-  if (!selected) {
+  const catalog = !selected;
+  renderMode(catalog);
+  if (!SHIPS.length) {
     for (const id of Object.values(TABLE_IDS)) {
-      $(id).innerHTML = SHIPS.length
-        ? '<div class="none">Sélectionne d’abord ton vaisseau à gauche.</div>'
-        : '<div class="none">En attente des données…</div>';
+      $(id).innerHTML = '<div class="none">En attente des données…</div>';
     }
     for (const id of ["cAvail", "cPack", "cUnavail", "cNoInGame"]) $(id).textContent = "";
     return;
   }
   const c = candidates();
-  $("tblAvail").innerHTML = ratioTable("avail", c.avail);
-  $("tblPack").innerHTML = ratioTable("pack", c.pack, { showPack: true });
-  $("tblUnavail").innerHTML = ratioTable("unavail", c.unavail);
-  $("tblNoInGame").innerHTML = noInGameTable("noInGame", c.noInGame);
+  $("tblAvail").innerHTML = ratioTable("avail", c.avail, { catalog });
+  $("tblPack").innerHTML = ratioTable("pack", c.pack, { catalog, showPack: true });
+  $("tblUnavail").innerHTML = ratioTable("unavail", c.unavail, { catalog });
+  $("tblNoInGame").innerHTML = noInGameTable("noInGame", c.noInGame, { catalog });
   // La largeur des barres de ratio est posée via l'API DOM (et non un
   // style="" inline dans le HTML généré), ce qui permet une CSP stricte sans
   // 'unsafe-inline' — l'attribut style parsé depuis le HTML serait bloqué,
@@ -299,8 +346,29 @@ function renderTables() {
  * Initialisation
  * ------------------------------------------------------------------------- */
 
+/** Colonnes qui n'existent qu'en mode upgrade : un tri posé sur l'une d'elles
+ * doit être oublié en repassant au catalogue, sinon le tableau serait trié sur
+ * une colonne invisible (toutes valeurs absentes). */
+const UPGRADE_COLS = ["cost", "gain", "marginal"];
+
+function selectShip(ship) {
+  selected = ship;
+  if (!ship) {
+    for (const st of Object.values(tableState)) {
+      if (UPGRADE_COLS.includes(st.sort)) {
+        st.sort = null;
+        st.dir = 1;
+      }
+    }
+  }
+  renderList($("search").value);
+  renderCurrent();
+  renderTables();
+}
+
 function init() {
   $("search").addEventListener("input", (e) => renderList(e.target.value));
+  $("clearSelection").addEventListener("click", () => selectShip(null));
   $("onlyBetter").addEventListener("change", renderTables);
   $("sortBy").addEventListener("change", renderTables);
   $("conciergeMode").addEventListener("change", () => {
