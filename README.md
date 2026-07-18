@@ -32,6 +32,19 @@ Elle ne contient que du HTML/CSS/JS statique : `index.html` charge `data.json`
 au chargement de la page (même origine, aucun problème CORS) et affiche les
 résultats.
 
+La page a deux modes, selon qu'un vaisseau de départ est sélectionné ou non :
+
+- **Catalogue complet** (aucune sélection, état initial) — tout le catalogue et
+  ses ratios, réparti dans les mêmes groupes de disponibilité, sans les colonnes
+  propres à l'upgrade (coût, gain de ratio, rendement) qui n'auraient pas de
+  sens sans point de comparaison. Permet de parcourir tous les vaisseaux sans
+  devoir sélectionner, par exemple, le moins cher.
+- **Upgrades possibles** (un vaisseau sélectionné) — uniquement les vaisseaux
+  plus chers (règle du CCU), avec le coût de l'upgrade et son rendement.
+
+On revient au catalogue avec le bouton « Voir tout le catalogue », ou en
+re-cliquant le vaisseau sélectionné.
+
 Le JavaScript est scindé en deux modules ES, chargés via
 `<script type="module">` (même origine, compatible avec la CSP stricte) :
 `core.js` regroupe la logique pure (calcul des upgrades candidats, tri/filtre,
@@ -124,7 +137,8 @@ automatiquement et ne font **aucun appel réseau réel** :
   remplacé par un bouchon le temps du test — aucun trafic réel.
 - [`docs/core.test.mjs`](docs/core.test.mjs) — logique pure du front-end
   ([`docs/core.js`](docs/core.js)) : calcul des upgrades candidats (règle CCU,
-  répartition en groupes, ratios, tri/filtre) et échappement HTML. `core.js`
+  répartition en groupes, ratios, tri/filtre), mode catalogue et échappement
+  HTML. `core.js`
   ne touche jamais au DOM, d'où des tests sans jsdom ni navigateur.
 
 La CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) rejoue

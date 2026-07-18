@@ -43,13 +43,20 @@
     <div class="layout">
       <aside class="panel">
         <h2>1. Ton vaisseau actuel</h2>
+        <div class="hint">
+          Facultatif : sans sélection, la page affiche tout le catalogue et ses ratios.
+        </div>
         <input id="search" type="search" placeholder="Rechercher un vaisseau…" autocomplete="off" />
+        <button type="button" id="clearSelection" class="clearsel" hidden>
+          ← Voir tout le catalogue
+        </button>
         <div id="shipList" role="listbox" aria-label="Vaisseaux"></div>
         <div id="current" class="current" hidden></div>
       </aside>
 
       <main>
         <div class="controls panel">
+          <div class="modeNote" id="modeNote"></div>
           <label><input type="checkbox" id="onlyBetter" checked /> Meilleur ratio uniquement</label>
           <label><input type="checkbox" id="conciergeMode" /> Mode Concierge</label>
           <label
@@ -65,7 +72,7 @@
 
         <section class="section panel">
           <h2>2. Achetables maintenant <span class="n" id="cAvail"></span></h2>
-          <div class="desc">
+          <div class="desc" id="descAvail">
             Vaisseaux que tu peux acheter dès aujourd'hui, seuls, sur le site officiel. Clique un
             en-tête de colonne pour trier.
           </div>
@@ -117,7 +124,7 @@
 
         <section class="section panel">
           <h2>5. Prix en jeu inconnu <span class="n" id="cNoInGame"></span></h2>
-          <div class="desc">
+          <div class="desc" id="descNoInGame">
             Vaisseaux plus chers que le tien, mais dont on ne connaît pas encore le prix en aUEC
             dans le jeu — souvent parce qu'ils n'existent pas encore en jeu (statut "Concept") ou
             qu'aucun vendeur ne les propose actuellement.
