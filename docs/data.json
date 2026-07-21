@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-17T08:00:53.435Z",
+    "generatedAt": "2026-07-21T08:18:02.853Z",
     "storefrontOk": true,
     "rsiOk": true,
     "shipMatrixOk": true,
@@ -1999,10 +1999,10 @@
     {
       "name": "Gatac Railen",
       "pledge": 400,
-      "available": true,
-      "packageOnly": false,
-      "packName": null,
-      "packConcierge": false,
+      "available": false,
+      "packageOnly": true,
+      "packName": "Dominus Pack",
+      "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Railen",
       "auec": null,
@@ -2025,7 +2025,7 @@
     {
       "name": "Gatac Tyilui",
       "pledge": 425,
-      "available": true,
+      "available": false,
       "packageOnly": false,
       "packName": null,
       "packConcierge": false,
