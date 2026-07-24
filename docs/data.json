@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-21T08:18:02.853Z",
+    "generatedAt": "2026-07-24T08:16:51.360Z",
     "storefrontOk": true,
     "rsiOk": true,
     "shipMatrixOk": true,
@@ -2036,6 +2036,19 @@
       "ratio": null
     },
     {
+      "name": "Grey's Market Basher",
+      "pledge": null,
+      "available": false,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
+      "concept": false,
+      "wikiUrl": "https://starcitizen.tools/Market_Basher",
+      "auec": null,
+      "loc": null,
+      "ratio": null
+    },
+    {
       "name": "Grey's Market Shiv",
       "pledge": 150,
       "available": false,
@@ -3331,9 +3344,9 @@
       "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Perseus",
-      "auec": 39680000,
+      "auec": 39690000,
       "loc": "Astro Armada",
-      "ratio": 49600
+      "ratio": 49612.5
     },
     {
       "name": "RSI Polaris",
