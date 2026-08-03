@@ -16,6 +16,9 @@ import {
   normName,
   wikiShipUrl,
   matchByBareName,
+  storefrontAliases,
+  buildStorefrontIndex,
+  unmatchedStorefrontNames,
   usdPriceEntry,
   bareNameCandidates,
   matchShipsToPacks,
@@ -76,6 +79,87 @@ test("matchByBareName retombe sur le nom sans constructeur", () => {
 
 test("matchByBareName renvoie null si rien ne correspond", () => {
   assert.equal(matchByBareName("Anvil Carrack", { cutlass: "X" }), null);
+});
+
+// ---------------------------------------------------------------------------
+// storefrontAliases / buildStorefrontIndex (NON-RÉGRESSION — cas Polaris)
+// ---------------------------------------------------------------------------
+//
+// Le pledge store vend « Polaris - Showdown Edition » ; le roster UEX ne
+// connaît que « RSI Polaris ». matchByBareName ne retire que des mots de
+// tête, donc sans alias le SKU n'était jamais apparié et le vaisseau, pourtant
+// en vente directe, se retrouvait classé « vendu en pack ». Ce bug est parti
+// en production faute de test sur un nom storefront *suffixé* : tous les tests
+// existants n'exerçaient que le retrait du constructeur.
+
+test("storefrontAliases indexe aussi le nom sans suffixe d'édition", () => {
+  const a = storefrontAliases("Polaris - Showdown Edition");
+  assert.equal(a.has("polaris showdown edition"), true);
+  assert.equal(a.has("polaris"), true);
+});
+
+test("storefrontAliases ne coupe pas dans un nom à variante (Zeus Mk II ES)", () => {
+  const a = storefrontAliases("Zeus Mk II ES - Showdown Edition");
+  assert.equal(a.has("zeus mk ii es"), true);
+  assert.equal(a.has("zeus"), false); // ne pas confondre avec les autres Zeus
+});
+
+test("storefrontAliases laisse intact un nom sans suffixe d'édition", () => {
+  assert.deepEqual([...storefrontAliases("Anvil Carrack")], ["anvil carrack"]);
+});
+
+test("un SKU à suffixe d'édition s'apparie au nom nu du roster", () => {
+  const index = buildStorefrontIndex([
+    {
+      name: "Polaris - Showdown Edition",
+      stock: { available: true },
+      nativePrice: { amount: 97500 },
+    },
+  ]);
+  const hit = matchByBareName("RSI Polaris", index);
+  assert.notEqual(hit, null);
+  assert.equal(hit.available, true);
+  assert.equal(hit.price, 975);
+});
+
+// Garde-fou sur l'heuristique elle-même : une règle plus permissive (retirer
+// aussi des mots de tête côté store) rattraperait quelques cas de plus mais
+// apparierait « C8R Pisces » à « Anvil C8 Pisces », deux vaisseaux distincts.
+test("l'appariement par suffixe ne crée pas de faux positif entre variantes", () => {
+  const index = buildStorefrontIndex([
+    { name: "C8R Pisces", stock: { available: true }, nativePrice: { amount: 6500 } },
+  ]);
+  assert.equal(matchByBareName("Anvil C8 Pisces", index), null);
+});
+
+test("buildStorefrontIndex fusionne les doublons au lieu de les écraser", () => {
+  // Le store renvoie réellement deux entrées « Basher ». Si la dernière est
+  // indisponible, elle ne doit pas effacer la disponibilité de la première.
+  const index = buildStorefrontIndex([
+    { name: "Basher", stock: { available: true }, nativePrice: { amount: 10000 } },
+    { name: "Basher", stock: { available: false }, nativePrice: { amount: 10000 } },
+  ]);
+  assert.equal(index.basher.available, true);
+  assert.equal(index.basher.price, 100);
+});
+
+test("buildStorefrontIndex renvoie null sur un catalogue vide", () => {
+  assert.equal(buildStorefrontIndex([]), null);
+  assert.equal(buildStorefrontIndex([{ nativePrice: { amount: 1 } }]), null); // sans nom
+});
+
+test("unmatchedStorefrontNames signale les SKU qu'aucun vaisseau ne réclame", () => {
+  const index = buildStorefrontIndex([
+    { name: "Polaris - Showdown Edition", stock: { available: true } },
+    { name: "Ursa Rover", stock: { available: true } },
+  ]);
+  const pledge = [{ name: "RSI Polaris" }];
+  // Polaris est réclamé via son alias ; Ursa Rover ne l'est pas.
+  assert.deepEqual(unmatchedStorefrontNames(index, pledge), ["Ursa Rover"]);
+});
+
+test("unmatchedStorefrontNames tolère un catalogue absent", () => {
+  assert.deepEqual(unmatchedStorefrontNames(null, [{ name: "RSI Polaris" }]), []);
 });
 
 // ---------------------------------------------------------------------------
@@ -320,20 +404,81 @@ test("buildDataset : storefront disponible → le repli RSI est ignoré", () => 
   assert.equal(ships[0].packageOnly, false);
 });
 
-test("buildDataset : une correction manuelle a priorité et force le pack", () => {
+test("buildDataset : une correction manuelle classe en pack un vaisseau non vendu seul", () => {
   const ships = buildDataset(
     {},
-    carrackPledge(true),
-    { carrack: { available: true, price: 600 } },
+    carrackPledge(false),
+    { cutlass: { name: "Cutlass", available: true, price: 100 } }, // Carrack absent du store
     null,
     null,
     null,
     null,
-    { "anvil carrack": { pack: "Pack Manuel", concierge: true } },
+    { "anvil carrack": { pack: "Pack Manuel", concierge: true, storeAlias: null } },
   );
   assert.equal(ships[0].available, false);
   assert.equal(ships[0].packageOnly, true);
   assert.equal(ships[0].packName, "Pack Manuel");
+  assert.equal(ships[0].packConcierge, true);
+});
+
+// NON-RÉGRESSION : « la vente directe est prioritaire sur le pack ». Avant,
+// la branche manuelle forçait available = false *avant* de regarder le
+// storefront — une entrée packages.txt obsolète (ajoutée pour contourner un
+// appariement raté, puis oubliée quand RSI remet le vaisseau en vente)
+// masquait durablement une vraie vente directe.
+test("buildDataset : une correction manuelle ne peut plus masquer une vente directe", () => {
+  const ships = buildDataset(
+    {},
+    carrackPledge(true),
+    { carrack: { name: "Carrack", available: true, price: 600 } }, // storefront : en vente
+    null,
+    null,
+    null,
+    null,
+    { "anvil carrack": { pack: "Pack Manuel", concierge: true, storeAlias: null } },
+  );
+  assert.equal(ships[0].available, true);
+  assert.equal(ships[0].packageOnly, false);
+  assert.equal(ships[0].packName, null);
+});
+
+// Le store vend « Ursa Rover », le roster dit « RSI Ursa » : aucune règle de
+// suffixe sûre ne relie les deux, d'où la déclaration d'alias.
+const ursaPledge = [{ key: "1", name: "RSI Ursa", pledge: 50, available: false, concept: false }];
+const ursaAlias = { "rsi ursa": { pack: null, concierge: false, storeAlias: "Ursa Rover" } };
+
+test("buildDataset : un alias @store relie le roster au nom du pledge store", () => {
+  const ships = buildDataset(
+    {},
+    ursaPledge,
+    { "ursa rover": { name: "Ursa Rover", available: true, price: 50 } },
+    null,
+    [{ name: "Praetorian Pack", ships: ["Ursa"] }], // le wiki le croit en pack Concierge
+    null,
+    null,
+    ursaAlias,
+  );
+  assert.equal(ships[0].available, true);
+  assert.equal(ships[0].packageOnly, false);
+  assert.equal(ships[0].packConcierge, false);
+});
+
+// Un alias déclare un nom, il ne fige pas une disponibilité : c'est ce qui
+// distingue « @store » d'un drapeau « forcer en vente », qui resterait bloqué
+// sur « en vente » une fois le vaisseau retiré du store.
+test("buildDataset : un alias @store ne force pas la disponibilité", () => {
+  const ships = buildDataset(
+    {},
+    ursaPledge,
+    { "ursa rover": { name: "Ursa Rover", available: false, price: 50 } }, // retiré du store
+    null,
+    [{ name: "Praetorian Pack", ships: ["Ursa"] }],
+    null,
+    null,
+    ursaAlias,
+  );
+  assert.equal(ships[0].available, false);
+  assert.equal(ships[0].packageOnly, true); // retombe sur le pack Concierge du wiki
   assert.equal(ships[0].packConcierge, true);
 });
 
@@ -623,22 +768,35 @@ test("loadPackagesFile analyse commentaires, synonymes et champs optionnels", as
         "Drake Cutlass | ",
         "Nomad",
         "RSI Zeus | Pack Z | concierge",
+        "RSI Ursa | @store | Ursa Rover",
       ].join("\n"),
       "utf-8",
     );
     const out = await loadPackagesFile(file);
 
-    assert.deepEqual(out["anvil carrack"], { pack: "Best In Show", concierge: true }); // « oui » = concierge
-    assert.deepEqual(out["drake cutlass"], { pack: null, concierge: false }); // 2e champ vide → pas de pack
-    assert.deepEqual(out["nomad"], { pack: null, concierge: false }); // champ unique
-    assert.deepEqual(out["rsi zeus"], { pack: "Pack Z", concierge: true });
+    // « oui » = concierge
+    assert.deepEqual(out["anvil carrack"], {
+      pack: "Best In Show",
+      concierge: true,
+      storeAlias: null,
+    });
+    // 2e champ vide → pas de pack
+    assert.deepEqual(out["drake cutlass"], { pack: null, concierge: false, storeAlias: null });
+    // champ unique
+    assert.deepEqual(out["nomad"], { pack: null, concierge: false, storeAlias: null });
+    assert.deepEqual(out["rsi zeus"], { pack: "Pack Z", concierge: true, storeAlias: null });
+    // déclaration d'alias : le 3e champ porte le nom côté store
+    assert.deepEqual(out["rsi ursa"], { pack: null, concierge: false, storeAlias: "Ursa Rover" });
     assert.equal("# ceci est un commentaire" in out, false);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-test("loadPackagesFile renvoie {} pour un chemin absent ou nul", async () => {
-  assert.deepEqual(await loadPackagesFile(join(tmpdir(), "n-existe-pas-12345.txt")), {});
-  assert.deepEqual(await loadPackagesFile(null), {});
+test("loadPackagesFile renvoie une table vide pour un chemin absent ou nul", async () => {
+  // Prototype null volontaire : une clé comme « constructor » ne doit pas
+  // passer pour une correction manuelle existante.
+  assert.deepEqual(Object.keys(await loadPackagesFile(join(tmpdir(), "n-existe-pas-1.txt"))), []);
+  assert.deepEqual(Object.keys(await loadPackagesFile(null)), []);
+  assert.equal(Object.getPrototypeOf(await loadPackagesFile(null)), null);
 });

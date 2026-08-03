@@ -88,18 +88,40 @@ node scripts/update-data.mjs
 npm test   # toute la suite de tests (node --test, sans réseau) — voir « Tests »
 ```
 
-Un fichier optionnel `scripts/packages.txt` permet de corriger manuellement
-la classification d'un vaisseau (nom de pack introuvable automatiquement,
-etc.). Il n'est pas versionné par défaut : copie le gabarit commenté
+### Priorité des statuts
+
+**La vente directe l'emporte toujours sur le pack.** Un vaisseau que le
+catalogue Standalone Ships déclare vendu seul est affiché « En vente », même
+si un pack le mentionne aussi et même si `packages.txt` le classe en pack —
+une correction manuelle devenue obsolète ne peut donc pas masquer une vraie
+vente.
+
+Le catalogue du store et le roster UEX ne nomment pas toujours un vaisseau
+pareil : le store vend par exemple « Polaris - Showdown Edition » là où UEX
+dit « RSI Polaris ». L'appariement gère les suffixes d'édition connus
+(`storefrontAliases`) ; les écarts qu'aucune règle sûre ne rattrape se
+déclarent dans `packages.txt`. À chaque exécution, le script **liste les
+entrées du catalogue qu'aucun vaisseau du roster ne réclame** — c'est le
+signal qui manquait quand des vaisseaux en vente se sont retrouvés classés en
+pack sans que rien ne l'indique.
+
+### Corrections manuelles (`scripts/packages.txt`)
+
+Ce fichier optionnel corrige la classification d'un vaisseau dans les deux
+sens. Copie le gabarit commenté
 [`scripts/packages.txt.example`](scripts/packages.txt.example) en
-`scripts/packages.txt`, complète-le, puis commite-le pour que la GitHub
-Action le prenne en compte. Format, un vaisseau par ligne :
+`scripts/packages.txt` et commite-le pour que la GitHub Action le prenne en
+compte. Un vaisseau par ligne, deux formes :
 
 ```
-Nom du vaisseau | Nom du pack | concierge
+Nom du vaisseau | Nom du pack | concierge      # forcer en « vendu en pack »
+Nom du vaisseau | @store | Nom côté store      # déclarer le nom du store
 ```
 
-Le 2ᵉ et 3ᵉ champ sont optionnels.
+Les 2ᵉ et 3ᵉ champs sont optionnels. Une ligne `@store` déclare seulement une
+correspondance de noms : elle ne force pas la disponibilité, qui reste lue
+dans le catalogue live. Si le vaisseau quitte le store, il repasse tout seul
+en « pas en vente », sans qu'il y ait de ligne à nettoyer.
 
 ### Filet de sécurité sur le roster
 
