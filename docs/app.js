@@ -111,24 +111,35 @@ async function loadData() {
  * Colonne de gauche : liste de sélection du vaisseau actuel
  * ------------------------------------------------------------------------- */
 
+/**
+ * La liste est régénérée à chaque frappe dans le champ de recherche, mais le
+ * conteneur, lui, ne bouge pas : le clic passe donc par délégation (un seul
+ * listener posé dans init(), voir shipList), comme pour les en-têtes de
+ * tableaux — plutôt qu'un handler recréé sur chacun des ~180 boutons.
+ *
+ * `data-ship` porte l'indice dans pledgedShips, stable quel que soit le
+ * filtre courant, ce qui évite d'avoir à retrouver le vaisseau par son nom.
+ */
 function renderList(filter) {
   const box = $("shipList");
-  box.innerHTML = "";
   const f = (filter || "").trim().toLowerCase();
-  const items = pledgedShips.filter((s) => s.name.toLowerCase().includes(f));
+  const items = [];
+  pledgedShips.forEach((s, i) => {
+    if (s.name.toLowerCase().includes(f)) items.push([s, i]);
+  });
   if (!items.length) {
-    box.innerHTML = '<div class="empty">Aucun vaisseau ne correspond.</div>';
+    box.innerHTML = '<div class="empty" role="presentation">Aucun vaisseau ne correspond.</div>';
     return;
   }
-  for (const s of items) {
-    const b = document.createElement("button");
-    b.setAttribute("role", "option");
-    if (selected && selected.name === s.name) b.className = "sel";
-    b.innerHTML = `<span>${esc(s.name)}</span><span class="p mono">${fmtUsd(s.pledge)}</span>`;
-    // Re-cliquer le vaisseau déjà sélectionné le désélectionne → catalogue.
-    b.onclick = () => selectShip(selected && selected.name === s.name ? null : s);
-    box.appendChild(b);
-  }
+  // aria-selected est requis par role="option" : sans lui, un lecteur d'écran
+  // annonce une liste dont aucune entrée n'est jamais sélectionnée, la
+  // sélection n'étant signalée que par la classe CSS.
+  box.innerHTML = items
+    .map(([s, i]) => {
+      const sel = Boolean(selected && selected.name === s.name);
+      return `<button role="option" aria-selected="${sel}"${sel ? ' class="sel"' : ""} data-ship="${i}"><span>${esc(s.name)}</span><span class="p mono">${fmtUsd(s.pledge)}</span></button>`;
+    })
+    .join("");
 }
 
 /* ---------------------------------------------------------------------------
@@ -368,6 +379,16 @@ function selectShip(ship) {
 
 function init() {
   $("search").addEventListener("input", (e) => renderList(e.target.value));
+
+  // Sélection du vaisseau courant, par délégation (voir renderList).
+  // Re-cliquer le vaisseau déjà sélectionné le désélectionne → catalogue.
+  $("shipList").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-ship]");
+    if (!b) return;
+    const s = pledgedShips[Number(b.dataset.ship)];
+    if (s) selectShip(selected && selected.name === s.name ? null : s);
+  });
+
   $("clearSelection").addEventListener("click", () => selectShip(null));
   $("onlyBetter").addEventListener("change", renderTables);
   $("sortBy").addEventListener("change", renderTables);
