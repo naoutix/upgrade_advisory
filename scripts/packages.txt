@@ -1,0 +1,20 @@
+# Corrections manuelles de classification des vaisseaux.
+# Format et options : voir packages.txt.example (même dossier).
+
+# --- Écarts de nommage entre le pledge store et le roster UEX ---------------
+#
+# Ces vaisseaux sont bien vendus seuls, mais sous un nom que l'appariement
+# automatique ne peut pas déduire sans risquer un faux positif (« C8R Pisces »
+# ressemble autant à « Anvil C8 Pisces » qu'à « Anvil C8R Pisces Rescue »).
+# On déclare donc explicitement la correspondance.
+#
+# Ces lignes ne forcent PAS la disponibilité : elles ne font que relier les
+# deux noms. Si le vaisseau quitte le catalogue, il repasse automatiquement en
+# « pas en vente » — inutile de nettoyer.
+#
+# Pour repérer de nouveaux écarts : le script liste en fin d'exécution les
+# entrées du catalogue Standalone Ships qu'aucun vaisseau du roster ne réclame.
+
+Anvil C8R Pisces Rescue | @store | C8R Pisces
+Greycat PTV             | @store | PTV Buggy
+RSI Ursa                | @store | Ursa Rover

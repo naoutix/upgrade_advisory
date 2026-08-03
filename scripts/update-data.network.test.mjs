@@ -172,7 +172,7 @@ test("fetchStorefrontStandaloneShips mappe prix (centimes /100) et disponibilitÃ
       ),
     async () => {
       const r = await fetchStorefrontStandaloneShips();
-      assert.deepEqual(r["anvil carrack"], { available: true, price: 600 });
+      assert.deepEqual(r["anvil carrack"], { name: "Anvil Carrack", available: true, price: 600 });
     },
   );
 });

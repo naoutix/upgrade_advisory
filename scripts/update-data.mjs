@@ -122,6 +122,47 @@ export function matchByBareName(uexName, values) {
   return null;
 }
 
+// Qualificatifs d'édition que le pledge store accole au nom d'un vaisseau
+// ("Polaris - Showdown Edition"). La liste est explicite et non générique :
+// voir storefrontAliases() pour pourquoi.
+const EDITION_QUALIFIERS = [
+  "showdown",
+  "best in show",
+  "invictus",
+  "foundation festival",
+  "intergalactic aerospace expo",
+  "anniversary",
+  "limited",
+];
+const EDITION_SUFFIX = new RegExp(`\\s+(?:${EDITION_QUALIFIERS.join("|")})?\\s*edition$`);
+
+/**
+ * Clés sous lesquelles indexer une entrée du catalogue storefront.
+ *
+ * Le store vend parfois un vaisseau sous un nom d'édition ("Polaris - Showdown
+ * Edition") alors que le roster UEX ne connaît que le nom nu ("RSI Polaris").
+ * matchByBareName() ne sait retirer que des mots de *tête* (le constructeur),
+ * jamais un suffixe : sans alias, ces SKU n'étaient jamais appariés et le
+ * vaisseau se retrouvait classé « vendu en pack » alors qu'il est en vente
+ * directe — le cas Polaris.
+ *
+ * On n'ajoute QUE le nom débarrassé de son suffixe d'édition, et seulement
+ * pour une liste explicite de qualificatifs. Une règle générique (retirer
+ * n'importe quel mot de queue, ou appliquer aussi le retrait de mots de tête
+ * de matchByBareName au nom du store) rattraperait quelques cas de plus mais
+ * produit des faux positifs : "C8R Pisces" s'apparierait alors à
+ * "Anvil C8 Pisces", deux vaisseaux distincts. Un qualificatif inconnu est
+ * donc simplement ignoré — et signalé par unmatchedStorefrontNames(), à
+ * déclarer au besoin comme alias dans packages.txt.
+ */
+export function storefrontAliases(name) {
+  const n = normName(name);
+  const aliases = new Set([n]);
+  const bare = n.replace(EDITION_SUFFIX, "").trim();
+  if (bare.length >= 3) aliases.add(bare);
+  return aliases;
+}
+
 // ---------------------------------------------------------------------------
 // Extraction UEX — API officielle 2.0 (pas de scraping HTML)
 // ---------------------------------------------------------------------------
@@ -345,16 +386,70 @@ export async function fetchStorefrontStandaloneShips() {
     );
     return null;
   }
-  const result = {};
+  return buildStorefrontIndex(resources);
+}
+
+/**
+ * Indexe le catalogue Standalone Ships par nom normalisé *et* par alias sans
+ * suffixe d'édition (voir storefrontAliases).
+ *
+ * Deux entrées qui se normalisent pareil (variante warbond, doublon de
+ * listing — le store renvoie par exemple "Basher" deux fois) sont FUSIONNÉES
+ * et non écrasées : avant, le dernier écrit gagnait, si bien qu'une entrée
+ * indisponible pouvait effacer la disponibilité d'une entrée en vente. On
+ * garde donc `available` dès qu'une seule des entrées est en vente, et le
+ * premier prix connu.
+ *
+ * Pur (ne fait aucun réseau), donc testable avec des fixtures.
+ */
+export function buildStorefrontIndex(resources) {
+  const result = Object.create(null);
   for (const r of resources) {
     if (!r.name) continue;
     const native = r.nativePrice && r.nativePrice.amount;
-    result[normName(String(r.name))] = {
-      available: Boolean(r.stock && r.stock.available),
-      price: typeof native === "number" ? native / 100 : null,
-    };
+    const name = String(r.name);
+    const available = Boolean(r.stock && r.stock.available);
+    const price = typeof native === "number" ? native / 100 : null;
+    for (const key of storefrontAliases(name)) {
+      const prev = result[key];
+      result[key] = prev
+        ? { name: prev.name, available: prev.available || available, price: prev.price ?? price }
+        : { name, available, price };
+    }
   }
   return Object.keys(result).length ? result : null;
+}
+
+/** Recherche exacte (nom normalisé) dans l'index storefront. */
+export function lookupStorefront(storefrontIndex, name) {
+  const key = normName(name);
+  return Object.prototype.hasOwnProperty.call(storefrontIndex, key) ? storefrontIndex[key] : null;
+}
+
+/**
+ * Noms du catalogue storefront qu'aucun vaisseau du roster ne réclame.
+ *
+ * C'est le filet qui manquait quand le cas Polaris est passé en production :
+ * un SKU non apparié ne produisait aucun signal, le vaisseau basculait
+ * simplement en « vendu en pack » et personne ne voyait rien. Chaque nom
+ * remonté ici est soit un vaisseau absent du roster UEX (normal, rien à
+ * faire), soit un écart de nommage à corriger — nouveau qualificatif
+ * d'édition à ajouter, ou entrée « @vente » dans packages.txt.
+ *
+ * Pur, donc testable sans réseau.
+ */
+export function unmatchedStorefrontNames(storefrontIndex, pledge, manualPackages = {}) {
+  if (!storefrontIndex) return [];
+  const claimed = new Set();
+  for (const p of pledge) {
+    const manual = manualPackages[normName(p.name)];
+    const hit =
+      (manual && manual.storeAlias ? lookupStorefront(storefrontIndex, manual.storeAlias) : null) ||
+      matchByBareName(p.name, storefrontIndex);
+    if (hit) claimed.add(hit.name);
+  }
+  const all = new Set(Object.values(storefrontIndex).map((e) => e.name));
+  return [...all].filter((n) => !claimed.has(n)).sort();
 }
 
 async function fetchStorefrontPacks() {
@@ -589,18 +684,38 @@ export function matchShipsToConciergePacks(packs) {
   return result;
 }
 
+// Marqueur du 2e champ de packages.txt qui force un vaisseau en vente
+// directe, au lieu de le forcer en pack. Le « @ » ne peut pas entrer en
+// collision avec un vrai nom de pack. Voir storefrontAliases() : l'heuristique
+// de suffixe ne couvre que les qualificatifs d'édition connus, et certains
+// écarts de nommage du store ("Ursa Rover" vs "RSI Ursa") n'ont pas de règle
+// sûre — d'où cette trappe manuelle, symétrique de la mise en pack.
+// Marqueur du 2e champ de packages.txt qui déclare, non pas un pack, mais le
+// nom sous lequel le pledge store vend ce vaisseau (3e champ).
+//
+// C'est volontairement un *alias* et non un « forcer en vente » : la
+// disponibilité reste lue dans le catalogue live. Une ligne oubliée après le
+// retrait du vaisseau du store le repasse donc automatiquement en « pas en
+// vente », là où un drapeau booléen l'aurait figé en vente indéfiniment —
+// le même piège de fraîcheur que celui corrigé côté pack.
+const STORE_ALIAS_MARKER = "@store";
+
 export async function loadPackagesFile(path) {
-  const out = {};
+  const out = Object.create(null);
   if (!path || !existsSync(path)) return out;
   const text = await readFile(path, "utf-8");
   for (const rawLine of text.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (!line || line.startsWith("#")) continue;
     const parts = line.split("|").map((p) => p.trim());
-    const pack = parts.length > 1 && parts[1] ? parts[1] : null;
-    const concierge =
-      parts.length > 2 && ["concierge", "oui", "yes", "true", "1"].includes(parts[2].toLowerCase());
-    out[normName(parts[0])] = { pack, concierge };
+    const packField = parts.length > 1 && parts[1] ? parts[1] : null;
+    const isAlias = packField !== null && packField.toLowerCase() === STORE_ALIAS_MARKER;
+    const third = parts.length > 2 ? parts[2] : "";
+    out[normName(parts[0])] = {
+      pack: isAlias ? null : packField,
+      concierge: !isAlias && ["concierge", "oui", "yes", "true", "1"].includes(third.toLowerCase()),
+      storeAlias: isAlias && third ? third : null,
+    };
   }
   return out;
 }
@@ -648,8 +763,19 @@ export function buildDataset(
     if (ig) used.add(ig);
     const best = locations.length ? locations[0] : null;
 
+    const manualKey = normName(p.name);
+    const manual = Object.hasOwn(manualPackages, manualKey) ? manualPackages[manualKey] : null;
+
+    // Un alias déclaré dans packages.txt court-circuite l'appariement
+    // automatique : il couvre les écarts de nommage qu'aucune règle sûre ne
+    // rattrape ("Ursa Rover" côté store contre "RSI Ursa" côté roster).
+    // La disponibilité reste celle du catalogue live.
     const storefrontMatch =
-      storefrontStandalone !== null ? matchByBareName(p.name, storefrontStandalone) : null;
+      storefrontStandalone !== null
+        ? (manual && manual.storeAlias
+            ? lookupStorefront(storefrontStandalone, manual.storeAlias)
+            : null) || matchByBareName(p.name, storefrontStandalone)
+        : null;
     let available;
     if (storefrontStandalone !== null) {
       available = Boolean(storefrontMatch && storefrontMatch.available);
@@ -679,12 +805,21 @@ export function buildDataset(
     let packageOnly = false;
     let packName = null;
     let packConcierge = false;
-    const manualKey = normName(p.name);
-    if (manualKey in manualPackages) {
+
+    // Une ligne d'alias (@store) ne dit rien du pack : seules les lignes de
+    // mise en pack sont consommées ici.
+    const manualPack = manual && !manual.storeAlias ? manual : null;
+
+    // Priorité : la vente directe l'emporte toujours sur le pack — d'où le
+    // `!available` sur la branche manuelle aussi. Une correction manuelle ne
+    // peut donc plus rétrograder un vaisseau que le storefront déclare vendu
+    // seul : sinon une entrée devenue obsolète (ajoutée pour contourner un
+    // appariement raté, puis oubliée quand RSI remet le vaisseau en vente)
+    // masquerait durablement une vraie vente.
+    if (manualPack && !available) {
       packageOnly = true;
-      packName = manualPackages[manualKey].pack;
-      packConcierge = manualPackages[manualKey].concierge;
-      available = false;
+      packName = manualPack.pack;
+      packConcierge = manualPack.concierge;
     } else if (!available) {
       const matchedPack = Object.keys(shipToPack).length
         ? matchByBareName(p.name, shipToPack)
@@ -820,6 +955,19 @@ async function main() {
     shipMatrix,
     manualPackages,
   );
+
+  // Écarts de nommage entre le catalogue du store et le roster UEX : sans ce
+  // signal, un SKU non apparié faisait basculer le vaisseau en « vendu en
+  // pack » sans le moindre avertissement (cas Polaris).
+  const unmatched = unmatchedStorefrontNames(storefrontStandalone, pledge, manualPackages);
+  if (unmatched.length) {
+    log(
+      `Avertissement: ${unmatched.length} entrée(s) du catalogue Standalone Ships ` +
+        `sans vaisseau correspondant dans le roster UEX — si c'est un écart de ` +
+        `nommage, le déclarer dans packages.txt (« Nom du roster | @store | Nom du store ») :`,
+    );
+    for (const n of unmatched) log(`  - ${n}`);
+  }
 
   const flags = {
     storefrontOk: storefrontStandalone !== null,

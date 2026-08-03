@@ -5,24 +5,49 @@
 # à chaque exécution. Sans ce fichier, la classification repose entièrement
 # sur les sources automatiques (voir scripts/update-data.mjs).
 #
-# À quoi ça sert : forcer un vaisseau en « vendu en pack uniquement » quand
-# l'appariement automatique ne trouve pas son pack (nom de pack absent des
-# excerpts du storefront, pack Concierge non listé sur le wiki, etc.).
+# À quoi ça sert, dans les deux sens :
+#
+#   - forcer un vaisseau en « vendu en pack uniquement » quand l'appariement
+#     automatique ne trouve pas son pack (nom de pack absent des excerpts du
+#     storefront, pack Concierge non listé sur le wiki, etc.) ;
+#   - déclarer sous quel nom le pledge store vend un vaisseau, quand ce nom
+#     diffère trop de celui du roster pour être apparié automatiquement
+#     (ex. « Ursa Rover » côté store contre « RSI Ursa » côté roster).
 #
 # Format, un vaisseau par ligne, champs séparés par « | » :
 #
-#     Nom du vaisseau | Nom du pack | concierge
+#     Nom du vaisseau | Nom du pack | concierge      (mise en pack)
+#     Nom du vaisseau | @store | Nom côté store      (déclaration d'alias)
 #
 #   - Champ 1 (requis)   : nom du vaisseau tel qu'affiché (ex. « Anvil Carrack »).
 #                          La casse et les accents sont normalisés, peu importe.
 #   - Champ 2 (optionnel): nom du pack à afficher. Vide = « Pack » générique.
-#   - Champ 3 (optionnel): marque le pack comme réservé aux membres Concierge.
-#                          Valeurs acceptées : concierge, oui, yes, true, 1.
+#                          La valeur spéciale « @store » change le sens de la
+#                          ligne : le champ 3 devient le nom du vaisseau dans
+#                          le catalogue Standalone Ships du pledge store.
+#   - Champ 3 (optionnel): marque le pack comme réservé aux membres Concierge
+#                          (valeurs acceptées : concierge, oui, yes, true, 1),
+#                          ou, après « @store », le nom côté store.
 #
 # Les lignes vides et celles commençant par « # » sont ignorées.
+#
+# IMPORTANT — la vente directe est prioritaire sur le pack. Une ligne de mise
+# en pack ne s'applique donc QUE si le pledge store ne vend pas déjà le
+# vaisseau seul : une entrée devenue obsolète ne peut plus masquer une vraie
+# vente.
+#
+# Une ligne « @store » déclare un alias, elle ne force PAS la disponibilité :
+# celle-ci reste lue dans le catalogue live. Si le vaisseau quitte le store,
+# il repasse tout seul en « pas en vente », sans qu'il y ait à nettoyer la
+# ligne.
+#
+# Astuce : le script liste en fin d'exécution les entrées du catalogue
+# Standalone Ships qu'aucun vaisseau du roster ne réclame — c'est exactement
+# la liste des alias à déclarer ici.
 #
 # Exemples (à adapter / supprimer) :
 #
 # RSI Zeus Mk II CL | Zeus Prospector Pack
 # Aegis Idris-P | Legatus Pack | concierge
 # Drake Golem |
+# RSI Ursa | @store | Ursa Rover
