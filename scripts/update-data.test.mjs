@@ -60,6 +60,14 @@ test("wikiShipUrl garde un nom d'un seul mot tel quel", () => {
   assert.equal(wikiShipUrl("Nomad"), "https://starcitizen.tools/Nomad");
 });
 
+test("wikiShipUrl encode les caractères qui casseraient l'URL", () => {
+  // Sans encodage, tout ce qui suit « # » devient un fragment et le lien
+  // pointe sur la mauvaise page.
+  assert.equal(wikiShipUrl("Anvil F7C#M"), "https://starcitizen.tools/F7C%23M");
+  assert.equal(wikiShipUrl("Drake Buccaneer?"), "https://starcitizen.tools/Buccaneer%3F");
+  assert.equal(wikiShipUrl("MISC Fortune & Co"), "https://starcitizen.tools/Fortune_%26_Co");
+});
+
 // ---------------------------------------------------------------------------
 // matchByBareName
 // ---------------------------------------------------------------------------
@@ -464,6 +472,30 @@ test("matchShipsToPacks associe un nom multi-mots entouré d'espaces", () => {
   const packs = [{ name: "P", excerpt: "the Anvil Carrack is here" }];
   const result = matchShipsToPacks(packs, new Set(["anvil carrack"]));
   assert.deepEqual(result["anvil carrack"], { pack: "P", concierge: false });
+});
+
+test("matchShipsToPacks : le premier pack cité l'emporte sur les suivants", () => {
+  const packs = [
+    { name: "Premier", excerpt: "includes the Carrack" },
+    { name: "Second", excerpt: "also includes the Carrack" },
+  ];
+  const result = matchShipsToPacks(packs, new Set(["carrack"]));
+  assert.equal(result.carrack.pack, "Premier");
+});
+
+// Les tables d'appariement ont un prototype null : sans ça, un nom normalisé
+// tel que « constructor » ou « tostring » répondait vrai au test
+// d'appartenance et le vaisseau était silencieusement ignoré.
+test("matchShipsToPacks n'est pas trompé par les clés du prototype", () => {
+  const packs = [{ name: "P", excerpt: "includes the constructor and the tostring" }];
+  const result = matchShipsToPacks(packs, new Set(["constructor", "tostring"]));
+  assert.equal(result.constructor.pack, "P");
+  assert.equal(result.tostring.pack, "P");
+});
+
+test("matchShipsToConciergePacks n'est pas trompé par les clés du prototype", () => {
+  const result = matchShipsToConciergePacks([{ name: "VIP", ships: ["Constructor"] }]);
+  assert.deepEqual(result.constructor, { pack: "VIP", concierge: true });
 });
 
 // ---------------------------------------------------------------------------

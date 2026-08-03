@@ -18,6 +18,7 @@ import {
   fetchStorefrontStandaloneShips,
   fetchShipMatrix,
   fetchRsiStandalone,
+  rsiPost,
 } from "./update-data.mjs";
 
 // Remplace globalThis.fetch par `impl` le temps de `fn`, puis restaure —
@@ -237,6 +238,31 @@ test("fetchRsiStandalone essaie les variantes et renvoie le premier résultat ex
     const r = await fetchRsiStandalone();
     assert.equal(r.carrack, true);
   });
+});
+
+// rsiPost appelait `fetch` sans AbortController, contrairement à fetchText :
+// un endpoint qui accepte la connexion sans jamais répondre bloquait les 4
+// appels enchaînés par fetchRsiStandalone — et avec eux tout le run de
+// l'Action, jusqu'au plafond GitHub de 6 h.
+test("rsiPost abandonne la requête après le délai (AbortController)", async () => {
+  const hang = (url, opts) =>
+    new Promise((_, reject) => {
+      opts.signal.addEventListener("abort", () => reject(new Error("aborted")));
+    });
+  await withFetch(hang, async () => {
+    await assert.rejects(rsiPost("query { __typename }", null, null, 5), /aborted/);
+  });
+});
+
+test("fetchRsiStandalone traite l'abandon comme une source injoignable", async () => {
+  await withFetch(
+    async () => {
+      throw new Error("aborted");
+    },
+    async () => {
+      assert.equal(await fetchRsiStandalone(), null); // repli, pas de plantage
+    },
+  );
 });
 
 test("fetchRsiStandalone renvoie null quand la sonde initiale échoue", async () => {
