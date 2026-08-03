@@ -18,6 +18,11 @@ concurrency:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    # Filet de dernier recours : le script a ses propres timeouts par requête,
+    # mais si l'un d'eux venait à manquer, le job courrait jusqu'au plafond
+    # GitHub de 6 h — en bloquant au passage les exécutions suivantes via
+    # `concurrency`. Une exécution normale prend moins d'une minute.
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4

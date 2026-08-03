@@ -106,7 +106,10 @@ export function normName(name) {
 export function wikiShipUrl(name) {
   const words = name.split(/\s+/);
   const bare = words.length > 1 ? words.slice(1).join(" ") : name;
-  return `${URL_WIKI_BASE}/${bare.replace(/ /g, "_")}`;
+  // Les « _ » sont la convention MediaWiki pour les espaces, on les pose donc
+  // *après* l'encodage. Sans encodage, un nom contenant « # » ou « ? »
+  // tronquait l'URL (fragment / query string) et le lien tombait à côté.
+  return `${URL_WIKI_BASE}/${encodeURIComponent(bare).replace(/%20/g, "_")}`;
 }
 
 export function matchByBareName(uexName, values) {
@@ -585,16 +588,31 @@ export function parseRsiResponse(data) {
   return Object.keys(result).length ? result : null;
 }
 
-async function rsiPost(query, variables, operationName) {
+// Contrairement aux autres sources, on lit ici le corps de la réponse même
+// sur un statut d'erreur (les messages GraphQL de RSI y sont) : d'où un fetch
+// direct plutôt que fetchText, qui lève sur non-2xx. Le timeout, lui, doit
+// être le même — sans lui, un endpoint qui accepte la connexion sans jamais
+// répondre bloquait indéfiniment les 4 appels enchaînés par
+// fetchRsiStandalone, et avec eux tout le run de l'Action.
+export async function rsiPost(query, variables, operationName, timeoutMs = 30000) {
   const payload = { query };
   if (variables !== null && variables !== undefined) payload.variables = variables;
   if (operationName) payload.operationName = operationName;
-  const resp = await fetch(URL_RSI_UPGRADE, {
-    method: "POST",
-    headers: { ...HTTP_HEADERS, "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const text = await resp.text();
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), timeoutMs);
+  let resp;
+  let text;
+  try {
+    resp = await fetch(URL_RSI_UPGRADE, {
+      method: "POST",
+      headers: { ...HTTP_HEADERS, "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    text = await resp.text();
+  } finally {
+    clearTimeout(t);
+  }
   let data = null;
   try {
     data = JSON.parse(text);
@@ -657,14 +675,20 @@ export function bareNameCandidates(names) {
 }
 
 export function matchShipsToPacks(packs, shipNames) {
-  const result = {};
+  // Le motif ne dépend que du candidat : on le compile une fois pour toutes,
+  // au lieu d'une fois par couple (pack, candidat) — soit ~25 000
+  // compilations par run pour ~500 motifs distincts.
+  const patterns = [...shipNames].map((candidate) => [
+    candidate,
+    new RegExp(`(?:^|\\s)${candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\s|$)`),
+  ]);
+  // Prototype null : sans ça, un vaisseau dont le nom normalisé vaut
+  // « constructor » ou « tostring » passerait pour déjà apparié.
+  const result = Object.create(null);
   for (const pack of packs) {
     const text = normName(pack.excerpt);
-    for (const candidate of shipNames) {
-      if (candidate in result) continue;
-      const re = new RegExp(
-        `(?:^|\\s)${candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\s|$)`,
-      );
+    for (const [candidate, re] of patterns) {
+      if (Object.hasOwn(result, candidate)) continue;
       if (re.test(text)) result[candidate] = { pack: pack.name, concierge: false };
     }
   }
@@ -672,12 +696,12 @@ export function matchShipsToPacks(packs, shipNames) {
 }
 
 export function matchShipsToConciergePacks(packs) {
-  const result = {};
+  const result = Object.create(null); // voir matchShipsToPacks
   const sorted = [...packs].sort((a, b) => a.ships.length - b.ships.length);
   for (const pack of sorted) {
     for (const token of pack.ships) {
       const key = normName(token);
-      if (key.length < 3 || key in result) continue;
+      if (key.length < 3 || Object.hasOwn(result, key)) continue;
       result[key] = { pack: pack.name, concierge: true };
     }
   }
