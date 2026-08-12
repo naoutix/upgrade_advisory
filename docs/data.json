@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-08-06T08:25:51.937Z",
+    "generatedAt": "2026-08-12T07:16:34.495Z",
     "storefrontOk": true,
     "rsiOk": true,
     "shipMatrixOk": true,
@@ -517,10 +517,10 @@
     {
       "name": "Anvil Asgard",
       "pledge": 350,
-      "available": false,
-      "packageOnly": true,
-      "packName": "Legatus 2955 Addendum",
-      "packConcierge": true,
+      "available": true,
+      "packageOnly": false,
+      "packName": null,
+      "packConcierge": false,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Asgard",
       "auec": 17860500,
@@ -2233,7 +2233,7 @@
     {
       "name": "Mirai Fury",
       "pledge": 55,
-      "available": true,
+      "available": false,
       "packageOnly": false,
       "packName": null,
       "packConcierge": false,
@@ -2246,7 +2246,7 @@
     {
       "name": "Mirai Fury LX",
       "pledge": 55,
-      "available": true,
+      "available": false,
       "packageOnly": false,
       "packName": null,
       "packConcierge": false,
@@ -2259,10 +2259,10 @@
     {
       "name": "Mirai Fury MX",
       "pledge": 55,
-      "available": true,
-      "packageOnly": false,
-      "packName": null,
-      "packConcierge": false,
+      "available": false,
+      "packageOnly": true,
+      "packName": "Dominus Pack",
+      "packConcierge": true,
       "concept": false,
       "wikiUrl": "https://starcitizen.tools/Fury_MX",
       "auec": 691268,
